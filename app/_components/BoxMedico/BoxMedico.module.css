@@ -1,0 +1,6 @@
+.boxMedico {
+  background-color: var(--bs-gray-100);
+  max-height: 300px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}

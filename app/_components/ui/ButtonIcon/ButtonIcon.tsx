@@ -1,4 +1,4 @@
-import { cn } from "@/lib/cn";
+import { cn } from "@/app/lib/cn";
 import { ComponentProps, forwardRef } from "react";
 import styles from "./ButtonIcon.module.css"
 

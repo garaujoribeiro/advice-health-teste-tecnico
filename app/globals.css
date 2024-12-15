@@ -13,7 +13,7 @@ body {
 }
 
 body {
-  background-color: var(--bs-gray-100);
+  background-color: var(--bs-gray-200);
 }
 
 a {
@@ -155,5 +155,5 @@ a {
   --menu-padding: 16px;
   --layout-open: 200px;
   --layout-closed: calc(var(--menu-icon-size) + 2 * var(--menu-padding));
-  --transition-layout: width 0.3s ease-in-out;
+  --transition-layout: width 0.2s;
 }

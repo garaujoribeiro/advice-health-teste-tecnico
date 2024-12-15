@@ -1,4 +1,4 @@
-import { cn } from "@/lib/cn";
+import { cn } from "@/app/lib/cn";
 import styles from "./SideMenu.module.css";
 import { APP_ROUTES } from "@/utils/app-routes";
 import Link from "next/link";

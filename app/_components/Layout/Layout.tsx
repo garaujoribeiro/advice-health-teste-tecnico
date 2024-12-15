@@ -6,7 +6,7 @@ import SideMenu from "../SideMenu/SideMenu";
 import ChevronDoubleRight from "../icons/ChevronDoubleRight";
 import Image from "next/image";
 import LogoImage from "@/public/assets/image1.png";
-import { cn } from "@/lib/cn";
+import { cn } from "@/app/lib/cn";
 import styles from "./Layout.module.css";
 import IconButton from "../ui/ButtonIcon/ButtonIcon";
 
@@ -53,12 +53,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </Header>
       </div>
 
-      <div className="row flex-grow-1">
+      <div className="row flex-grow-1 flex-nowrap">
         <div className="col-auto p-0">
           <SideMenu open={open} />
         </div>
 
-        <div className="col-auto flex-grow-1">{children}</div>
+        <div className="col-auto flex-grow-1 pt-3">{children}</div>
       </div>
     </main>
   );

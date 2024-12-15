@@ -4,7 +4,7 @@ import styles from "./Avatar.module.css";
 import IconButton from "../ui/ButtonIcon/ButtonIcon";
 import { ComponentProps, forwardRef } from "react";
 import { Dropdown } from "react-bootstrap";
-import { cn } from "@/lib/cn";
+import { cn } from "@/app/lib/cn";
 
 const Toggle = forwardRef<HTMLButtonElement, ComponentProps<"button">>(
   (props, ref) => {
