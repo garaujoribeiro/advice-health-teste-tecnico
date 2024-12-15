@@ -33,16 +33,18 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
 
             <div className="position-relative d-flex justify-content-between align-items-center py-2 ps-2 pe-5 flex-grow-1">
-              <IconButton
-                className={styles.actionButton}
-                onClick={() => setOpen(!open)}
-              >
-                <ChevronDoubleRight width={16} height={16} />
-              </IconButton>
+              <div className="d-flex align-items-center">
+                <IconButton
+                  className={styles.actionButton}
+                  onClick={() => setOpen(!open)}
+                >
+                  <ChevronDoubleRight width={16} height={16} />
+                </IconButton>
 
-              <div className={styles.clienteInfoContainer}>
-                <h4>nome do cliente</h4>
-                <p>lorem ipsum lorem ipsum</p>
+                <div className={styles.clienteInfoContainer}>
+                  <h4>nome do cliente</h4>
+                  <p>lorem ipsum lorem ipsum</p>
+                </div>
               </div>
 
               <div>

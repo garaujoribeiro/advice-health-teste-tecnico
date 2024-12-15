@@ -1,20 +1,23 @@
 "use client";
 import UserFilledIcon from "../icons/UserFilledIcon";
 import styles from "./Avatar.module.css";
-import IconButton from "../ui/ButtonIcon/ButtonIcon";
-import { ComponentProps, forwardRef } from "react";
+import IconButton, { IconButtonProps } from "../ui/ButtonIcon/ButtonIcon";
+import { forwardRef } from "react";
 import { Dropdown } from "react-bootstrap";
 import { cn } from "@/app/lib/cn";
 
-const Toggle = forwardRef<HTMLButtonElement, ComponentProps<"button">>(
-  (props, ref) => {
-    return (
-      <IconButton className={cn(props?.className, styles.buttonIcon)} ref={ref} {...props}>
-        <UserFilledIcon width={40} height={40} className="p-2" />
-      </IconButton>
-    );
-  }
-);
+const Toggle = forwardRef<HTMLButtonElement, IconButtonProps>((props, ref) => {
+  return (
+    <IconButton
+      className={cn(props?.className, styles.buttonIcon)}
+      size="small"
+      ref={ref}
+      {...props}
+    >
+      <UserFilledIcon width={40} height={40} className="p-2" />
+    </IconButton>
+  );
+});
 
 Toggle.displayName = "Toggle";
 

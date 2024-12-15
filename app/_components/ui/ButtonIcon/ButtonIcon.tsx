@@ -1,14 +1,25 @@
+import { ForwardedRef, forwardRef } from "react";
+
+import IconButtonMui, {
+  IconButtonProps as IconButtonPropsMui,
+} from "@mui/material/IconButton";
 import { cn } from "@/app/lib/cn";
-import { ComponentProps, forwardRef } from "react";
-import styles from "./ButtonIcon.module.css"
 
-export const IconButton = forwardRef<
-  HTMLButtonElement,
-  ComponentProps<"button">
->(({ className, ...props }, ref) => {
-  return <button ref={ref} {...props} className={cn(className, styles.iconButton, "shadow-sm")} />;
-});
+export type IconButtonProps = IconButtonPropsMui;
 
-IconButton.displayName = "IconButton";
+const IconButton = (
+  { children, ...props }: IconButtonProps,
+  ref: ForwardedRef<HTMLButtonElement>
+) => {
+  return (
+    <IconButtonMui
+      className={cn(props?.className)}
+      ref={ref}
+      {...props}
+    >
+      {children}
+    </IconButtonMui>
+  );
+};
 
-export default IconButton;
+export default forwardRef(IconButton);

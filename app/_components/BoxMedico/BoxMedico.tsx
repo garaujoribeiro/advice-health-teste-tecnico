@@ -5,7 +5,7 @@ import styles from "./BoxMedico.module.css";
 export default function BoxMedico() {
   return (
     <div className="w-100">
-      <ul className={cn("list-unstyled bg-bg-light-subtle", styles.boxMedico)}>
+      <ul className={cn("list-unstyled", styles.boxMedico)}>
         {Array(10)
           .fill(CardMedico)
           .map((CardMedico, index) => (
