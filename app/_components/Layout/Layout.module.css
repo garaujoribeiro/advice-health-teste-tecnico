@@ -1,0 +1,41 @@
+:root {
+  --action-button-width: 32px;
+  --action-button-height: 32px;
+}
+
+.logoContainer {
+  border-right: 1px solid var(--bs-gray-300);
+  width: var(--layout-closed);
+  transition: var(--transition-layout);
+  padding: 0 var(--menu-padding) 0 calc(var(--menu-padding) - 1px); /* -1px para corrigir a borda do logoContainer */
+  &[data-open="true"] {
+    width: var(--layout-open);
+  }
+}
+
+.logoTextContainer {
+  color: var(--bs-gray-800);
+  transition: var(--transition-layout);
+  width: 0;
+  overflow: hidden;
+  &[data-open="true"] {
+    width: 150px;
+  }
+}
+
+.clienteInfoContainer {
+  margin-left: calc(
+    var(--action-button-width) + 12px
+  ); /* necessario adicionar o tamanho do botao a margem para o elemento nao ficar embaixo do botao */
+}
+
+.actionButton {
+  position: absolute;
+  left: 0;
+  top: calc(
+    50% - (var(--action-button-height) / 2)
+  ); /* 50% - a metade do tamanho do botao para centralizar */
+  height: var(--action-button-height);
+  width: var(--action-button-width);
+  margin-left: 4px;
+}
