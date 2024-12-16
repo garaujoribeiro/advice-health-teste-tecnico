@@ -1,4 +1,5 @@
 "use client";
+import { cn } from "@/app/lib/cn";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 const columns: GridColDef<(typeof rows)[number]>[] = [
@@ -44,9 +45,9 @@ const rows = [
   { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
 ];
 
-export default function TabelaLembretes() {
+export default function TabelaLembretes({fluid}: {fluid?: boolean}) {
   return (
-    <div className="container-fluid">
+    <div className={cn(fluid && "container-fluid")}>
       <DataGrid
         rows={rows}
         columns={columns}
