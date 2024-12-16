@@ -1,3 +1,5 @@
+import ConsultaIndexPage from "@/app/_screens/Consulta";
+
 export default function ConsultaPage() {
-  return <div>consulta</div>;
+  return <ConsultaIndexPage />;
 }
