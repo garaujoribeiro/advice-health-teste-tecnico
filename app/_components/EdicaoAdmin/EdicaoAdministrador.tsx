@@ -1,61 +1,67 @@
-"use client";
-
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  agendamentoFormDefaultValues,
-  AgendamentoFormSchema,
-  agendamentoFormSchema,
-} from "@/app/_forms/add-agendamento";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  FormLabel,
-  TextField,
-} from "@mui/material";
-import { cepMask, cpfMask, phoneMask } from "@/utils/masks";
-import { api } from "@/api/api";
-import { useDebounce } from "@/app/_hooks/useDebounce";
+import { Agendamento, Medico } from "@/api/types";
 import {
   useAgendamentos,
   useAgendamentosMutations,
 } from "@/app/_hooks/useAgendamentos";
-import { Agendamento, AgendamentoDTO } from "@/api/types";
-import { useSearchParams } from "next/navigation";
-import { ModalType } from "../BoxAgendamento/BoxAgendamento";
+import { cpfMask, phoneMask, cepMask } from "@/utils/masks";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  DialogActions,
+  DialogProps,
+  Autocomplete,
+  Checkbox,
+  InputLabel,
+  FormControl,
+  FormLabel,
+  Button,
+} from "@mui/material";
 import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import useMedicos from "@/app/_hooks/useMedicos";
+import {
+  editAdminSchema,
+  EditAdminSchema,
+  editAdminSchemaDefaultValues,
+} from "@/app/_forms/edit-admin";
 import useSnackbar from "@/app/_hooks/useSnackbar";
+import { useDebounce } from "@/app/_hooks/useDebounce";
+import { api } from "@/api/api";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-interface ModalAgendamentoProps {
-  open: boolean;
-  dispatch: React.Dispatch<{ type: "open" | "close" }>;
-  modalType: ModalType;
-  hora: Date;
-  agendamentoId?: string;
-  refetch: () => void;
+interface EdicaoAdminProps extends DialogProps {
+  id: string;
 }
 
-export default function ModalAgendamento({
-  dispatch,
-  modalType,
-  agendamentoId,
-  open,
-  hora,
-  refetch,
-}: ModalAgendamentoProps) {
-  const form = useForm<AgendamentoFormSchema>({
+export default function EdicaoAdmin({ id, open, onClose }: EdicaoAdminProps) {
+  const form = useForm<EditAdminSchema>({
     shouldFocusError: true,
     mode: "onSubmit",
     reValidateMode: "onBlur",
-    defaultValues: agendamentoFormDefaultValues,
-    resolver: zodResolver(agendamentoFormSchema),
+    defaultValues: editAdminSchemaDefaultValues,
+    resolver: zodResolver(editAdminSchema),
   });
 
+  const {
+    getAgendamentoQuery: { data },
+    getAgendamentosQuery: { refetch },
+  } = useAgendamentos({
+    agendamentoId: id ?? "",
+  });
+
+  const {
+    getMedicosQuery: { data: dataMedico },
+  } = useMedicos();
+
+  const medicos = dataMedico as Medico[];
+
+  const agendamento = data as Agendamento;
+
   const { showSnackbar } = useSnackbar();
+
+  const { setValue, watch, reset } = form;
 
   const queryCep = useDebounce(async (cep: string) => {
     if (cep.length < 9) return;
@@ -68,72 +74,50 @@ export default function ModalAgendamento({
         complemento: string;
         logradouro: string;
       }>(`https://viacep.com.br/ws/${cep}/json/`);
-      form.setValue("bairro", bairro);
-      form.setValue("logradouro", logradouro);
-      form.setValue("complemento", complemento);
+      setValue("bairro", bairro);
+      setValue("logradouro", logradouro);
+      setValue("complemento", complemento);
     } catch (err) {
       console.log(err);
     }
   }, 600);
 
-  const { postAgendamentoMutation, putAgendamentoMutation } =
-    useAgendamentosMutations({
-      agendamentoId,
-      config: {
-        onSuccess: () => {
-          dispatch({ type: "close" });
-          showSnackbar({
-            message: "Operação realizada com sucesso!",
-            alertProps: { severity: "success" },
-          });
-          refetch();
-        },
-      },
-    });
-
-  const medicoId = useSearchParams().get("med");
-
-  const {
-    getAgendamentoQuery: { data },
-  } = useAgendamentos({
-    agendamentoId,
-    config: { enabled: !!agendamentoId, refetchOnMount: true },
-  });
-
-  const agendamento = data as Agendamento;
-
-  const { setValue, reset } = form;
-
   useEffect(() => {
-    const {
-      bairro_cliente,
-      cep_cliente,
-      complemento_cliente,
-      cpf_cliente,
-      endereco_cliente,
-      nome_cliente,
-      numero_cliente,
-      telefone_cliente,
-    } = agendamento;
-    if (modalType === ModalType.EDIT && agendamentoId && open) {
-      setValue("nome", nome_cliente);
-      setValue("telefone", telefone_cliente);
-      setValue("cpf", cpf_cliente);
-      setValue("cep", cep_cliente);
-      setValue("logradouro", endereco_cliente);
-      setValue("numero", numero_cliente);
-      setValue("complemento", complemento_cliente);
-      setValue("bairro", bairro_cliente);
-    }
+    if (!agendamento) return;
+    setValue("nome", agendamento.nome_cliente);
+    setValue("cpf", agendamento.cpf_cliente);
+    setValue("telefone", agendamento.telefone_cliente);
+    setValue("cep", agendamento.cep_cliente);
+    setValue("logradouro", agendamento.endereco_cliente);
+    setValue("numero", agendamento.numero_cliente);
+    setValue("complemento", agendamento.complemento_cliente);
+    setValue("bairro", agendamento.bairro_cliente);
+    setValue("pago", agendamento?.pago ?? 0);
+    setValue("atendido", agendamento?.atendido ?? 0);
+    setValue("medico_id", agendamento.medico_id);
+  }, [agendamento, reset, setValue]);
 
-    return () => reset();
-  }, [agendamento, agendamentoId, modalType, setValue, reset, open]);
+  const { putAgendamentoMutation } = useAgendamentosMutations({
+    agendamentoId: agendamento.id,
+    config: {
+      onSuccess: () => {
+        if (onClose) {
+          onClose({}, "backdropClick");
+        }
+        showSnackbar({
+          message: "Operação realizada com sucesso!",
+          alertProps: { severity: "success" },
+        });
+        refetch();
+      },
+    },
+  });
 
   return (
     <Dialog
       open={open}
-      onClose={() => dispatch({ type: "close" })}
-      maxWidth="md"
+      onClose={onClose}
+      maxWidth="lg"
       fullWidth
       PaperProps={{
         component: "form",
@@ -141,12 +125,8 @@ export default function ModalAgendamento({
           padding: 2,
         },
         onSubmit: form.handleSubmit((data) => {
-          if (!medicoId) return;
-          const agendamento: AgendamentoDTO = {
-            hora,
-            medico_id: medicoId,
-            pago: 0,
-            id: medicoId + "-" + hora.toISOString() + "-" + data.cpf,
+          putAgendamentoMutation.mutate({
+            ...data,
             nome_cliente: data.nome,
             telefone_cliente: data.telefone,
             cpf_cliente: data.cpf,
@@ -155,21 +135,66 @@ export default function ModalAgendamento({
             numero_cliente: data.numero,
             complemento_cliente: data.complemento,
             bairro_cliente: data.bairro,
-          };
-          if (modalType === ModalType.EDIT && agendamentoId) {
-            putAgendamentoMutation.mutate({
-              ...agendamento,
-              id: agendamentoId,
-            });
-            return;
-          }
-          postAgendamentoMutation.mutate(agendamento);
+          });
         }),
       }}
     >
-      <DialogTitle>Agendar Consulta</DialogTitle>
-      <DialogContent>
+      <DialogTitle>Edição de administrador</DialogTitle>
+      <DialogContent sx={{ gap: 2, pt: 3 }}>
         <div className="row w-100">
+          <div className="col-10">
+            <Autocomplete
+              sx={{ mt: 3 }}
+              options={medicos}
+              getOptionLabel={(option) => option.nome}
+              getOptionKey={(option) => option.id}
+              onChange={(_event, value) => {
+                if (value) {
+                  setValue("medico_id", value.id);
+                }
+              }}
+              value={
+                medicos.find(
+                  (medico) => medico.id === form.watch("medico_id")
+                ) ?? null
+              }
+              renderInput={(props) => (
+                <TextField label="Buscar médico" {...props} />
+              )}
+            />
+          </div>
+
+          <div className="col-2">
+            <InputLabel>Editar status</InputLabel>
+            <div className="d-flex gap-1 align-items-center">
+              <Checkbox
+                checked={!!watch("atendido")}
+                id={"check-atendimento"}
+                onChange={(e) => {
+                  setValue("atendido", e.currentTarget.checked ? 1 : 0);
+                }}
+              />
+              <InputLabel
+                className="m-0 user-select-none"
+                htmlFor="check-atendimento"
+              >
+                Atendido
+              </InputLabel>
+            </div>
+
+            <div className="d-flex gap-1 align-items-center">
+              <Checkbox
+                onChange={(e) => {
+                  setValue("pago", e.currentTarget.checked ? 1 : 0);
+                }}
+                checked={!!watch("pago")}
+                id={"pago"}
+              />
+              <InputLabel className="m-0 user-select-none" htmlFor="pago">
+                Pago
+              </InputLabel>
+            </div>
+          </div>
           <div className="col-6 flex-grow-1">
             <FormControl fullWidth>
               <FormLabel htmlFor="nome">Nome*</FormLabel>
@@ -187,10 +212,9 @@ export default function ModalAgendamento({
               <FormLabel htmlFor="CPF">CPF*</FormLabel>
               <TextField
                 placeholder="CPF do paciente"
-                fullWidth
                 {...form.register("cpf", {
                   onChange: (e) => {
-                    form.setValue("cpf", cpfMask(e.target.value));
+                    setValue("cpf", cpfMask(e.target.value));
                   },
                 })}
                 slotProps={{
@@ -213,7 +237,7 @@ export default function ModalAgendamento({
                 placeholder="Telefone"
                 {...form.register("telefone", {
                   onChange: (e) => {
-                    form.setValue("telefone", phoneMask(e.target.value));
+                    setValue("telefone", phoneMask(e.target.value));
                   },
                 })}
                 slotProps={{
@@ -232,11 +256,10 @@ export default function ModalAgendamento({
               <FormLabel htmlFor="cep">Cep</FormLabel>
               <TextField
                 placeholder="Cep"
-                fullWidth
                 {...form.register("cep", {
                   onChange: (e) => {
                     const { value } = e.target;
-                    form.setValue("cep", cepMask(value));
+                    setValue("cep", cepMask(value));
                     queryCep(value.replaceAll(".", ""));
                   },
                 })}
@@ -266,11 +289,7 @@ export default function ModalAgendamento({
           <div className="col-6">
             <FormControl fullWidth>
               <FormLabel htmlFor="numero">Numero</FormLabel>
-              <TextField
-                placeholder="Numero"
-                fullWidth
-                {...form.register("numero")}
-              />
+              <TextField placeholder="Numero" {...form.register("numero")} />
             </FormControl>
           </div>
         </div>
@@ -288,7 +307,6 @@ export default function ModalAgendamento({
               <FormLabel htmlFor="complemento">Complemento</FormLabel>
               <TextField
                 placeholder="Complemento do endereço"
-                fullWidth
                 {...form.register("complemento")}
               />
             </FormControl>
@@ -298,9 +316,7 @@ export default function ModalAgendamento({
       <DialogActions>
         <Button
           type="reset"
-          onClick={() => {
-            dispatch({ type: "close" });
-          }}
+          onClick={(e) => onClose && onClose(e, "backdropClick")}
         >
           Cancelar
         </Button>

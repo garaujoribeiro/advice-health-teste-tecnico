@@ -60,7 +60,6 @@ export const useAgendamentosMutations = (args?: UseAgendamentosMutationOptions) 
     ...args?.config
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const deleteAgendamentoMutation = useMutation({
     mutationKey: [`delete-agendamento"}`],
     mutationFn: () => {

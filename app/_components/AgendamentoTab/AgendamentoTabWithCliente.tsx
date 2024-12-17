@@ -1,12 +1,10 @@
 "use client";
 import hourFormatter from "@/utils/hour-formatter";
-import Avatar from "@mui/material/Avatar";
-import Image from "next/image";
 import PencilSquareIcon from "../icons/PencilSquare";
 import TrashIcon from "../icons/Trash";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RepeatIcon from "@mui/icons-material/Repeat";
-import { Chip, IconButton } from "@mui/material";
+import { Chip, IconButton, Tooltip } from "@mui/material";
 import styles from "./AgendamentoTab.module.css";
 import { cn } from "@/app/lib/cn";
 import { useContext } from "react";
@@ -21,7 +19,7 @@ export interface AgendamentoTabProps {
   pago: 0 | 1;
   toAdd?: boolean;
   id?: string;
-  atendido?: boolean;
+  atendido?: 0 | 1;
 }
 
 export default function AgendamentoTabWithCliente({
@@ -33,7 +31,7 @@ export default function AgendamentoTabWithCliente({
   telefone,
   pago,
   id,
-  atendido
+  atendido,
 }: AgendamentoTabProps) {
   const { dispatch } = useContext(MenuContext);
 
@@ -91,7 +89,12 @@ export default function AgendamentoTabWithCliente({
         {disabled || toAdd ? null : (
           <div>
             {atendido ? (
-              <Chip size="small" className="" label={<p className="m-0 fw-semibold">Atendido</p>} color="info" />
+              <Chip
+                size="small"
+                className=""
+                label={<p className="m-0 fw-semibold">Atendido</p>}
+                color="info"
+              />
             ) : (
               <Chip
                 size="small"
@@ -116,7 +119,12 @@ export default function AgendamentoTabWithCliente({
         {disabled || toAdd ? null : (
           <div>
             {pago ? (
-              <Chip size="small" className="" label={<p className="m-0 fw-semibold">Pago</p>} color="success" />
+              <Chip
+                size="small"
+                className=""
+                label={<p className="m-0 fw-semibold">Pago</p>}
+                color="success"
+              />
             ) : (
               <Chip
                 size="small"
@@ -142,73 +150,82 @@ export default function AgendamentoTabWithCliente({
       {disabled ? null : !toAdd ? (
         <ul className="list-unstyled d-flex gap-2 align-items-center m-0">
           <li>
-            <IconButton
-              onClick={() => {
-                dispatch({
-                  type: "open",
-                  payload: {
-                    modalType: ModalType.TRANSFERIR,
-                    hora,
-                    id,
-                  },
-                });
-              }}
-              size="small"
-            >
-              <RepeatIcon height={20} width={20} />
-            </IconButton>
+            <Tooltip title="Transferir" arrow>
+              <IconButton
+                onClick={() => {
+                  dispatch({
+                    type: "open",
+                    payload: {
+                      modalType: ModalType.TRANSFERIR,
+                      hora,
+                      id,
+                    },
+                  });
+                }}
+                size="small"
+              >
+                <RepeatIcon height={20} width={20} />
+              </IconButton>
+            </Tooltip>
+          </li>
+
+          <li>
+            <Tooltip title="Editar" arrow>
+              <IconButton
+                onClick={() => {
+                  dispatch({
+                    type: "open",
+                    payload: {
+                      modalType: ModalType.EDIT,
+                      hora,
+                      id,
+                    },
+                  });
+                }}
+                size="small"
+              >
+                <PencilSquareIcon height={20} width={20} />
+              </IconButton>
+            </Tooltip>
           </li>
           <li>
-            <IconButton
-              onClick={() => {
-                dispatch({
-                  type: "open",
-                  payload: {
-                    modalType: ModalType.EDIT,
-                    hora,
-                    id,
-                  },
-                });
-              }}
-              size="small"
-            >
-              <PencilSquareIcon height={20} width={20} />
-            </IconButton>
-          </li>
-          <li>
-            <IconButton
-              onClick={() => {
-                dispatch({
-                  type: "open",
-                  payload: {
-                    modalType: ModalType.DELETE,
-                    hora,
-                    id,
-                  },
-                });
-              }}
-              size="small"
-            >
-              <TrashIcon height={20} width={20} />
-            </IconButton>
+            <Tooltip title="Deletar" arrow>
+              <IconButton
+                onClick={() => {
+                  dispatch({
+                    type: "open",
+                    payload: {
+                      modalType: ModalType.DELETE,
+                      hora,
+                      id,
+                    },
+                  });
+                }}
+                size="small"
+              >
+                <TrashIcon height={20} width={20} />
+              </IconButton>
+            </Tooltip>
           </li>
         </ul>
       ) : (
-        <IconButton
-          onClick={() => {
-            dispatch({
-              type: "open",
-              payload: {
-                modalType: ModalType.ADD,
-                hora,
-              },
-            });
-          }}
-          className="ms-auto"
-          size="medium"
-        >
-          <AddCircleOutlineIcon height={24} width={24} />
-        </IconButton>
+        <Tooltip title="Adicionar" arrow>
+          <IconButton
+            onClick={() => {
+              dispatch({
+                type: "open",
+                payload: {
+                  modalType: ModalType.ADD,
+                  hora,
+                },
+              });
+            }}
+            className="ms-auto"
+            size="medium"
+          >
+            <AddCircleOutlineIcon height={24} width={24} />
+          </IconButton>
+        </Tooltip>
       )}
     </div>
   );

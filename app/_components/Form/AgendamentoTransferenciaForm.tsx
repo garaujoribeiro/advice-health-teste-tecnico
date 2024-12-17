@@ -15,11 +15,12 @@ import {
   useAgendamentos,
   useAgendamentosMutations,
 } from "@/app/_hooks/useAgendamentos";
-import { Agendamento, Medicos } from "@/api/types";
+import { Agendamento, Medico } from "@/api/types";
 import { useSearchParams } from "next/navigation";
 import useMedicos from "@/app/_hooks/useMedicos";
 import { useMemo } from "react";
 import getMedicoAtendeEsseHorario from "@/utils/medicoAtende";
+import useSnackbar from "@/app/_hooks/useSnackbar";
 
 interface ModalAgendamentoTransferenciaProps {
   open: boolean;
@@ -36,11 +37,17 @@ export default function ModalAgendamentoTransferencia({
 }: ModalAgendamentoTransferenciaProps) {
   const form = useForm();
 
+  const { showSnackbar } = useSnackbar();
+
   const { putAgendamentoMutation } = useAgendamentosMutations({
     agendamentoId,
     config: {
       onSuccess: () => {
         dispatch({ type: "close" });
+        showSnackbar({
+          message: "Operação realizada com sucesso!",
+          alertProps: { severity: "success" },
+        });
         refetch();
       },
     },
@@ -55,11 +62,12 @@ export default function ModalAgendamentoTransferencia({
     medicoId: medicoId ?? undefined,
   });
 
-  const medicos = dataMedicos as Medicos[];
-  const { especialidade } = dataMedico as Medicos;
+  const medicos = dataMedicos as Medico[];
+  const { especialidade } = dataMedico as Medico;
 
   const {
     getAgendamentoQuery: { data },
+    getAgendamentosQuery: { data: agendamentos },
   } = useAgendamentos({
     agendamentoId,
     config: { enabled: !!agendamentoId, refetchOnMount: true },
@@ -75,9 +83,14 @@ export default function ModalAgendamentoTransferencia({
           horario: agendamento.hora,
           horario_entrada: medico.horario_entrada,
           horario_saida: medico.horario_saida,
-        })
+        }) &&
+        !(agendamentos as Agendamento[]).some(
+          (agendamentoToCompare) =>
+            agendamentoToCompare.medico_id === medico.id &&
+            agendamento.hora === agendamentoToCompare.hora
+        )
     );
-  }, [medicos, especialidade, agendamento.hora]);
+  }, [medicos, especialidade, agendamento.hora, agendamentos]);
 
   return (
     <Dialog

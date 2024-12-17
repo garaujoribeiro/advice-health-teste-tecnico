@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { formErrorMessages } from "../_errors/form-errors";
 
-export const agendamentoFormSchema = z.object({
+
+export const editAdminSchema = z.object({
   nome: z.string().min(4, {
     message: formErrorMessages.campoObrigatorio("nome"),
   }),
@@ -27,11 +28,20 @@ export const agendamentoFormSchema = z.object({
   numero: z.optional(z.string()),
   cidade: z.optional(z.string()),
   uf: z.optional(z.string()),
+  medico_id: z.string().min(1, {
+    message: formErrorMessages.campoObrigatorio("médico"),
+  }),
+  atendido: z.number().min(0).max(1).min(1, {
+    message: formErrorMessages.campoObrigatorio("atendido"),
+  }),
+  pago: z.number().min(0).max(1).min(1, {
+    message: formErrorMessages.campoObrigatorio("pago"),
+  }),
 });
 
-export type AgendamentoFormSchema = z.infer<typeof agendamentoFormSchema>;
+export type EditAdminSchema = z.infer<typeof editAdminSchema>;
 
-export const agendamentoFormDefaultValues: AgendamentoFormSchema = {
+export const editAdminSchemaDefaultValues: EditAdminSchema = {
   cpf: "",
   telefone: "",
   cep: "",
@@ -41,5 +51,8 @@ export const agendamentoFormDefaultValues: AgendamentoFormSchema = {
   logradouro: "",
   bairro: "",
   complemento: "",
-  numero: ""
+  numero: "",
+  medico_id: "",
+  atendido: 0,
+  pago: 0
 };

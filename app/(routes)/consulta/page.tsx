@@ -1,5 +1,10 @@
 import ConsultaIndexPage from "@/app/_screens/Consulta";
+import { Suspense } from "react";
 
 export default function ConsultaPage() {
-  return <ConsultaIndexPage />;
+  return (
+    <Suspense>
+      <ConsultaIndexPage />
+    </Suspense>
+  );
 }
