@@ -26,12 +26,12 @@ export default function Avatar() {
     <Dropdown>
       <Dropdown.Toggle as={Toggle} id="dropdown-basic" />
       <Dropdown.Menu>
-        <Dropdown.Item style={{ cursor: "not-allowed" }}>Perfil</Dropdown.Item>
-        <Dropdown.Item style={{ cursor: "not-allowed" }}>
+        <Dropdown.Item style={{ cursor: "not-allowed", pointerEvents: "none" }}>Perfil</Dropdown.Item>
+        <Dropdown.Item style={{ cursor: "not-allowed", pointerEvents: "none" }}>
           Configurações
         </Dropdown.Item>
         <Dropdown.Divider />
-        <Dropdown.Item style={{ cursor: "not-allowed" }}>Sair</Dropdown.Item>
+        <Dropdown.Item style={{ cursor: "not-allowed", pointerEvents: "none" }}>Sair</Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
   );
