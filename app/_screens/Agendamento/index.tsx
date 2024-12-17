@@ -4,12 +4,15 @@ import BoxMedico from "@/app/_components/BoxMedico/BoxMedico";
 import DatePicker from "@/app/_components/DatePicker/DatePicker";
 import Paper from "@mui/material/Paper";
 import dayjs from "dayjs";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 const now = dayjs();
 
 export default function AgendamentoScreenIndex() {
-  const [data, setData] = useState(now);
+  const dataParam = useSearchParams().get("hora");
+
+  const [data, setData] = useState(dataParam ? dayjs(dataParam) : now);
   return (
     <div className="container-fluid row justify-content-between">
       <div className="col-12 col-xl-4 d-flex flex-column flex-lg-row flex-xl-column gap-2 justify-content-between">

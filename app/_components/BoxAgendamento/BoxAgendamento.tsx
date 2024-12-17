@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-import Paper from "@mui/material/Paper";
 import AgendamentoTabWithCliente from "../AgendamentoTab/AgendamentoTabWithCliente";
 import hoursArr from "@/utils/hours-arr";
 import useMedicos from "@/app/_hooks/useMedicos";
@@ -80,8 +79,6 @@ export default function BoxAgendamento({
     getMedicoQuery: { data },
   } = useMedicos({ medicoId: med ?? "" });
 
-  if (!med) return null;
-
   const medico = data as Medicos;
 
   return (
@@ -139,7 +136,7 @@ export default function BoxAgendamento({
               telefone={agendamento?.telefone_cliente ?? ""}
               pago={agendamento?.pago ?? 0}
               id={agendamento?.id ?? ""}
-              atendido={agendamento?.atendido ?? false}
+              atendido={agendamento?.atendido ?? (false as boolean)}
               disabled={
                 !getMedicoAtendeEsseHorario({
                   horario: hour,

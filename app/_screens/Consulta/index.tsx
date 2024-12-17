@@ -1,5 +1,6 @@
 "use client";
 import { Agendamento, Medicos } from "@/api/types";
+import AgendamentoTable from "@/app/_components/AgendamentoTable/AgendamentoTable";
 import FiltroConsultaModal from "@/app/_components/FiltroConsultaModal/FiltroConsultaModal";
 import { useAgendamentos } from "@/app/_hooks/useAgendamentos";
 import { useDebounce } from "@/app/_hooks/useDebounce";
@@ -272,31 +273,16 @@ export default function ConsultaIndexPage() {
         </div>
 
         <div className="mt-4">
-          <DataGrid
-            rows={rowsFiltered}
-            disableAutosize
-            disableColumnResize
-            disableColumnSorting
-            disableEval
-            disableDensitySelector
-            disableVirtualization
-            disableMultipleRowSelection
-            disableColumnSelector
-            ignoreValueFormatterDuringExport
-            ignoreDiacritics
-            resizeThrottleMs={0}
-            columns={columns}
-            disableColumnFilter
-            disableColumnMenu
-            initialState={{
-              pagination: {
-                paginationModel: {
-                  pageSize: 10,
+          <AgendamentoTable
+            dataGridProps={{
+              initialState: {
+                pagination: {
+                  paginationModel: {
+                    pageSize: 10,
+                  },
                 },
               },
             }}
-            loading={isFetching}
-            disableRowSelectionOnClick
           />
         </div>
       </Paper>

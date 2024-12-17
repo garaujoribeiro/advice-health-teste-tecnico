@@ -7,6 +7,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+p {
+  margin: 0;
+}
+
 html,
 body {
   height: 100%;
@@ -24,6 +28,7 @@ a {
 .dropdown-toggle::after {
   display: none; /* esconder a setinha do botao de dropdown */
 }
+
 
 :root,
 [data-bs-theme="light"] {
@@ -153,7 +158,7 @@ a {
   --bs-form-invalid-border-color: #dc3545;
   --menu-icon-size: 26px;
   --menu-padding: 16px;
-  --layout-open: 200px;
-  --layout-closed: calc(var(--menu-icon-size) + 2 * var(--menu-padding));
+  --layout-open: calc(var(--menu-icon-size) + 2 * var(--menu-padding));
+  --layout-closed: 0;
   --transition-layout: width 0.2s;
 }

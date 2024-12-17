@@ -11,22 +11,18 @@ export default function SideMenu({ open }: { open: boolean }) {
           const {
             href,
             icon: Icon,
-            label,
           } = APP_ROUTES[key as keyof typeof APP_ROUTES];
           return (
-            <li className={cn(styles.sideMenuListItem, "gap-2")} key={href}>
-              <div>
+            <Link
+              data-open={open}
+              className={cn(styles.sideMenuItemText)}
+              href={href}
+              key={href}
+            >
+              <li className={cn(styles.sideMenuListItem, "gap-2")}>
                 <Icon width={26} height={26} />
-              </div>
-
-              <Link
-                data-open={open}
-                className={cn(styles.sideMenuItemText)}
-                href={href}
-              >
-                {label}
-              </Link>
-            </li>
+              </li>
+            </Link>
           );
         })}
       </ul>

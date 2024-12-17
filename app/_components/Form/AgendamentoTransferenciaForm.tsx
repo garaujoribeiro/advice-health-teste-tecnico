@@ -19,6 +19,7 @@ import { Agendamento, Medicos } from "@/api/types";
 import { useSearchParams } from "next/navigation";
 import useMedicos from "@/app/_hooks/useMedicos";
 import { useMemo } from "react";
+import getMedicoAtendeEsseHorario from "@/utils/medicoAtende";
 
 interface ModalAgendamentoTransferenciaProps {
   open: boolean;
@@ -67,8 +68,16 @@ export default function ModalAgendamentoTransferencia({
   const agendamento = data as Agendamento;
 
   const medicosFiltered = useMemo(() => {
-    return medicos.filter((medico) => medico.especialidade === especialidade);
-  }, [medicos, especialidade]);
+    return medicos.filter(
+      (medico) =>
+        medico.especialidade === especialidade &&
+        getMedicoAtendeEsseHorario({
+          horario: agendamento.hora,
+          horario_entrada: medico.horario_entrada,
+          horario_saida: medico.horario_saida,
+        })
+    );
+  }, [medicos, especialidade, agendamento.hora]);
 
   return (
     <Dialog

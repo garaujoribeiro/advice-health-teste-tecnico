@@ -6,7 +6,7 @@ export default function Header({ children }: { children: ReactNode }) {
   return (
     <header
       className={cn(
-        "d-flex align-items-center p-0 shadow-mg rounded-b-lg border-b-1",
+        "d-flex align-items-center p-0 shadow-mg rounded-b-lg border-b-1 py-2",
         styles.header
       )}
     >

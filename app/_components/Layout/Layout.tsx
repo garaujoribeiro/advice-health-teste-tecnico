@@ -32,7 +32,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </div>
             </div>
 
-            <div className="position-relative d-flex justify-content-between align-items-center py-2 ps-2 pe-5 flex-grow-1">
+            <div className="position-relative d-flex justify-content-between align-items-center py-2 ps-4 pe-5 flex-grow-1">
               <div className="d-flex align-items-center">
                 <IconButton
                   className={styles.actionButton}
@@ -60,7 +60,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <SideMenu open={open} />
         </div>
 
-        <div className="col-auto flex-grow-1 pt-3">{children}</div>
+        <div style={{
+          maxWidth: "95%",
+          transition: "width 0.3s",
+        }} className="col-auto flex-grow-1 pt-3">{children}</div>
       </div>
     </main>
   );

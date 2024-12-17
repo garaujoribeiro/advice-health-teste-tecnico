@@ -9,6 +9,7 @@ export interface CardMedicoProps {
   nome: string;
   especialidade: string;
   selected?: boolean;
+  valor: number;
 }
 
 export default function CardMedico({
@@ -16,6 +17,7 @@ export default function CardMedico({
   nome,
   especialidade,
   selected,
+  valor,
 }: CardMedicoProps) {
   return (
     <div
@@ -41,6 +43,13 @@ export default function CardMedico({
           <small>{especialidade}</small>
         </p>
       </div>
+
+      <small className="ms-auto me-4 fw-semibold text-success">
+        {valor.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        })}
+      </small>
     </div>
   );
 }
