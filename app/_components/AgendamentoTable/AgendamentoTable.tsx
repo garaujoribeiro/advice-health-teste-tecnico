@@ -14,6 +14,7 @@ interface AgendamentoTableProps {
   dataGridProps?: Partial<DataGridProps>;
   filterFn?: (agendamento: Agendamento) => boolean;
   rowClick?: (agendamento: Agendamento) => void;
+  action?: GridColDef<Agendamento>["renderCell"];
 }
 
 /**
@@ -27,6 +28,7 @@ export default function AgendamentoTable({
   dataGridProps,
   filterFn,
   rowClick,
+  action,
 }: AgendamentoTableProps) {
   const {
     getAgendamentosQuery: { data, isFetching, isFetched },
@@ -37,7 +39,6 @@ export default function AgendamentoTable({
   const {
     getMedicosQuery: { data: dataMedicos },
   } = useMedicos();
-
 
   const agendamentos = useMemo(
     () => (data as Agendamento[]).filter(filterFn ?? (() => true)),
@@ -138,16 +139,22 @@ export default function AgendamentoTable({
         },
         width: 150,
       },
+      {
+        field: "action",
+        headerName: "",
+        hide: !action,
+        renderCell: action,
+      },
     ],
-    [medicos]
+    [action, medicos]
   );
 
   return (
     <DataGrid
       onRowClick={({ row }) => rowClick?.(row as Agendamento)}
-      onCellClick={undefined}
       rows={agendamentos}
       rowSpacingType="margin"
+      disableRowSelectionOnClick
       disableColumnResize
       disableColumnSorting
       disableEval
@@ -160,7 +167,6 @@ export default function AgendamentoTable({
       columns={columns}
       disableColumnFilter
       disableColumnMenu
-      disableRowSelectionOnClick
       initialState={{
         pagination: {
           paginationModel: {
@@ -172,8 +178,8 @@ export default function AgendamentoTable({
         row: {
           style: {
             cursor: "pointer",
-          }
-        }
+          },
+        },
       }}
       pageSizeOptions={[3]}
       loading={shouldLoad}

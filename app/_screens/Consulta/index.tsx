@@ -6,10 +6,12 @@ import { useDebounce } from "@/app/_hooks/useDebounce";
 import useMedicos from "@/app/_hooks/useMedicos";
 import { APP_ROUTES } from "@/utils/app-routes";
 import { removeMask } from "@/utils/masks";
-import { Paper, TextField } from "@mui/material";
+import { IconButton, Menu, MenuItem, Paper, TextField } from "@mui/material";
 import dayjs from "dayjs";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createContext, useCallback, useReducer } from "react";
+import { createContext, useCallback, useReducer, useState } from "react";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import EdicaoAdmin from "@/app/_components/EdicaoAdmin/EdicaoAdministrador";
 
 export const FiltroContext = createContext({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -31,6 +33,33 @@ export const FiltroContext = createContext({
 });
 
 export default function ConsultaIndexPage() {
+  const [openModalEdicao, setOpenModalEdicao] = useState(false);
+  const [{ open: openMenu, anchorEl, rowId }, dispatchMenu] = useReducer(
+    (state, action) => {
+      switch (action.type) {
+        case "open":
+          return {
+            open: true,
+            anchorEl: action.payload.anchorEl,
+            rowId: action.payload.rowId,
+          };
+        case "close":
+          return {
+            open: false,
+            anchorEl: null,
+            rowId: "",
+          };
+        default:
+          return state;
+      }
+    },
+    {
+      open: false,
+      anchorEl: null,
+      rowId: "",
+    }
+  );
+
   const [
     { atendimento, data_fim, data_inicio, medico_id, pagamento },
     dispatch,
@@ -172,6 +201,24 @@ export default function ConsultaIndexPage() {
         <div className="mt-4">
           <AgendamentoTable
             filterFn={filterFn}
+            rowClick={undefined}
+            action={({ row: { id } }) => {
+              return (
+                <IconButton
+                  onClick={(e) =>
+                    dispatchMenu({
+                      type: "open",
+                      payload: {
+                        anchorEl: e.currentTarget,
+                        rowId: id,
+                      },
+                    })
+                  }
+                >
+                  <MoreHorizIcon />
+                </IconButton>
+              );
+            }}
             dataGridProps={{
               initialState: {
                 pagination: {
@@ -184,6 +231,31 @@ export default function ConsultaIndexPage() {
           />
         </div>
       </Paper>
+
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={openMenu}
+        onClose={() => dispatchMenu({ type: "close" })}
+        MenuListProps={{
+          "aria-labelledby": "basic-button",
+        }}
+      >
+        <MenuItem onClick={() => {
+          setOpenModalEdicao(true);
+        }}>Editar como administrador</MenuItem>
+      </Menu>
+
+      <EdicaoAdmin
+        id={rowId}
+        open={openModalEdicao && !!rowId}
+        onClose={() => {
+          dispatchMenu({
+            type: "close",
+          });
+          setOpenModalEdicao(false);
+        }}
+      />
     </div>
   );
 }

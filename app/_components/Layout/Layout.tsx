@@ -38,12 +38,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   className={styles.actionButton}
                   onClick={() => setOpen(!open)}
                 >
-                  <ChevronDoubleRight width={16} height={16} />
+                  <ChevronDoubleRight data-open={open} width={16} height={16} />
                 </IconButton>
 
                 <div className={styles.clienteInfoContainer}>
-                  <h4>nome do cliente</h4>
-                  <p>lorem ipsum lorem ipsum</p>
+                  <h4>Advice Health</h4>
+                  <p>garaujoribeirodev@gmail.com</p>
                 </div>
               </div>
 

@@ -54,6 +54,9 @@ export default function FiltroConsultaModal({
             <div className="col-8">
               <InputLabel>Filtrar por médico</InputLabel>
               <Autocomplete
+              sx={{
+                mt: 3
+              }}
                 options={medicosFiltered}
                 onChange={(_event, value) => {
                   if (!value) {
