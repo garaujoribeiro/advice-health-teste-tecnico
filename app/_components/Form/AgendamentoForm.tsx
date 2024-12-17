@@ -46,7 +46,7 @@ export default function ModalAgendamento({
   hora,
   refetch,
 }: ModalAgendamentoProps) {
-  console.log(hora)
+  console.log(hora);
   const form = useForm<AgendamentoFormSchema>({
     shouldFocusError: true,
     mode: "onSubmit",
@@ -75,7 +75,15 @@ export default function ModalAgendamento({
   }, 600);
 
   const { postAgendamentoMutation, putAgendamentoMutation } =
-    useAgendamentosMutations({ agendamentoId });
+    useAgendamentosMutations({
+      agendamentoId,
+      config: {
+        onSuccess: () => {
+          dispatch({ type: "close" });
+          refetch();
+        },
+      },
+    });
 
   const medicoId = useSearchParams().get("med");
 
@@ -119,7 +127,6 @@ export default function ModalAgendamento({
     <Dialog
       open={open}
       onClose={() => dispatch({ type: "close" })}
-      
       maxWidth="md"
       fullWidth
       PaperProps={{
@@ -128,7 +135,6 @@ export default function ModalAgendamento({
           padding: 2,
         },
         onSubmit: form.handleSubmit((data) => {
-          console.log(hora)
           if (!medicoId) return;
           const agendamento: AgendamentoDTO = {
             hora,
@@ -145,26 +151,13 @@ export default function ModalAgendamento({
             bairro_cliente: data.bairro,
           };
           if (modalType === ModalType.EDIT && agendamentoId) {
-            putAgendamentoMutation.mutate(
-              {
-                ...agendamento,
-                id: agendamentoId,
-              },
-              {
-                onSuccess: () => {
-                  dispatch({ type: "close" });
-                  refetch();
-                },
-              }
-            );
+            putAgendamentoMutation.mutate({
+              ...agendamento,
+              id: agendamentoId,
+            });
             return;
           }
-          postAgendamentoMutation.mutate(agendamento, {
-            onSuccess: () => {
-              dispatch({ type: "close" });
-              refetch();
-            },
-          });
+          postAgendamentoMutation.mutate(agendamento);
         }),
       }}
     >

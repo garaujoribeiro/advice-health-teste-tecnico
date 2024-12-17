@@ -60,5 +60,14 @@ export const useAgendamentosMutations = (args?: UseAgendamentosMutationOptions) 
     ...args?.config
   })
 
-  return { postAgendamentoMutation, putAgendamentoMutation }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const deleteAgendamentoMutation = useMutation({
+    mutationKey: [`delete-agendamento"}`],
+    mutationFn: () => {
+      return api.delete(`${API_ENDPOINTS.agendamentos}/${args?.agendamentoId}`)
+    },
+    ...args?.config
+  })
+
+  return { postAgendamentoMutation, putAgendamentoMutation, deleteAgendamentoMutation }
 }

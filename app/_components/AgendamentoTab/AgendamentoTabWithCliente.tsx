@@ -5,6 +5,7 @@ import Image from "next/image";
 import PencilSquareIcon from "../icons/PencilSquare";
 import TrashIcon from "../icons/Trash";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import RepeatIcon from '@mui/icons-material/Repeat';
 import { Chip, IconButton } from "@mui/material";
 import styles from "./AgendamentoTab.module.css";
 import { cn } from "@/app/lib/cn";
@@ -105,6 +106,7 @@ export default function AgendamentoTabWithCliente({
                   payload: {
                     modalType: ModalType.PAGAR,
                     hora,
+                    id,
                   },
                 });
               }}
@@ -117,6 +119,23 @@ export default function AgendamentoTabWithCliente({
 
       {disabled ? null : !toAdd ? (
         <ul className="list-unstyled d-flex gap-2 align-items-center m-0">
+          <li>
+            <IconButton
+              onClick={() => {
+                dispatch({
+                  type: "open",
+                  payload: {
+                    modalType: ModalType.TRANSFERIR,
+                    hora,
+                    id,
+                  },
+                });
+              }}
+              size="small"
+            >
+              <RepeatIcon height={20} width={20} />
+            </IconButton>
+          </li>
           <li>
             <IconButton
               onClick={() => {
@@ -142,6 +161,7 @@ export default function AgendamentoTabWithCliente({
                   payload: {
                     modalType: ModalType.DELETE,
                     hora,
+                    id,
                   },
                 });
               }}

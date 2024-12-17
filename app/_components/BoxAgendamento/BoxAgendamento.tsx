@@ -8,15 +8,18 @@ import { useSearchParams } from "next/navigation";
 import { Agendamento, Medicos } from "@/api/types";
 import getMedicoAtendeEsseHorario from "@/utils/medicoAtende";
 import { createContext, useReducer } from "react";
-import ModalAgendamento from "../Form/AddAgendamentoForm";
+import ModalAgendamento from "../Form/AgendamentoForm";
 import { useAgendamentos } from "@/app/_hooks/useAgendamentos";
 import dayjs, { Dayjs } from "dayjs";
+import ModalAgendamentoWithDelete from "../Form/AgendamentoPagamentoForm";
+import ModalAgendamentoTransferencia from "../Form/AgendamentoTransferenciaForm";
 
 export enum ModalType {
   ADD = "ADD",
   EDIT = "EDIT",
   DELETE = "DELETE",
   PAGAR = "PAGAR",
+  TRANSFERIR = "TRANSFERIR",
 }
 
 export const MenuContext = createContext({
@@ -79,8 +82,6 @@ export default function BoxAgendamento({
   if (!med) return null;
 
   const medico = data as Medicos;
-
-  console.log(agendamentos);
 
   return (
     <>
@@ -159,14 +160,35 @@ export default function BoxAgendamento({
         </MenuContext>
       </Paper>
 
-      <ModalAgendamento
-        refetch={refetch}
-        dispatch={dispatch}
-        open={open}
-        modalType={modalType}
-        hora={hora}
-        agendamentoId={agendamentoId}
-      />
+      {modalType === ModalType.ADD || modalType === ModalType.EDIT ? (
+        <ModalAgendamento
+          refetch={refetch}
+          dispatch={dispatch}
+          open={open}
+          modalType={modalType}
+          hora={hora}
+          agendamentoId={agendamentoId}
+        />
+      ) : null}
+
+      {modalType === ModalType.PAGAR || modalType === ModalType.DELETE ? (
+        <ModalAgendamentoWithDelete
+          refetch={refetch}
+          dispatch={dispatch}
+          open={open}
+          modalType={modalType}
+          agendamentoId={agendamentoId}
+        />
+      ) : null}
+
+      {modalType === ModalType.TRANSFERIR ? (
+        <ModalAgendamentoTransferencia
+          refetch={refetch}
+          dispatch={dispatch}
+          open={open}
+          agendamentoId={agendamentoId}
+        />
+      ) : null}
     </>
   );
 }
