@@ -49,12 +49,14 @@ export default function FiltroConsultaModal({
       </Button>
 
       <Dialog fullWidth maxWidth="lg" open={open} onClose={handleClose}>
-        <DialogTitle>Filtrar</DialogTitle>
-        <DialogContent>
+        <DialogTitle>Filtrar listagem</DialogTitle>
+        <DialogContent sx={{
+          padding: "24px 32px",
+        }}>
           <div className="row py-4">
-            <div className="col-6">
+            <div className="col-8">
+              <InputLabel>Filtrar por médico</InputLabel>
               <Autocomplete
-                sx={{ width: 500 }}
                 options={medicosFiltered}
                 onChange={(_event, value) => {
                   if (!value) {
@@ -81,42 +83,13 @@ export default function FiltroConsultaModal({
                 }
                 fullWidth
                 renderInput={(props) => (
-                  <TextField label="Filtrar por médico" {...props} />
+                  <TextField label="Buscar médico" {...props} />
                 )}
               />
             </div>
 
-            <div className="col-6 gap-2">
-              <DatePicker
-                onAccept={(date) => {
-                  dispatch({
-                    type: "filtrar",
-                    payload: {
-                      data_inicio: dayjs(date).toDate(),
-                    },
-                  });
-                }}
-                label="Data ínicio"
-              />
-
-              <DatePicker
-                onAccept={(date) => {
-                  dispatch({
-                    type: "filtrar",
-                    payload: {
-                      data_fim: dayjs(date).toDate(),
-                    },
-                  });
-                }}
-                label="Data fim"
-                className="ms-2"
-                minDate={dayjs(data_inicio) ?? dayjs()}
-              />
-            </div>
-          </div>
-
-          <div className="row">
             <div className="col-2">
+              <InputLabel>Filtrar por status</InputLabel>
               <div className="d-flex gap-1 align-items-center">
                 <Checkbox
                   onChange={(e) => {
@@ -145,9 +118,7 @@ export default function FiltroConsultaModal({
                   Atendido
                 </InputLabel>
               </div>
-            </div>
 
-            <div className="col-2">
               <div className="d-flex gap-1 align-items-center">
                 <Checkbox
                   onChange={(e) => {
@@ -174,6 +145,54 @@ export default function FiltroConsultaModal({
                 </InputLabel>
               </div>
             </div>
+
+            <div className="col-12 gap-2 d-flex align-items-center mt-4">
+              <div className="col-5">
+                <InputLabel>Filtrar por data inicial</InputLabel>
+                <DatePicker
+                  onAccept={(date) => {
+                    dispatch({
+                      type: "filtrar",
+                      payload: {
+                        data_inicio: dayjs(date).toDate(),
+                      },
+                    });
+                  }}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                    },
+                  }}
+                  label="Data ínicio"
+                />
+              </div>
+
+              <div className="col-5">
+                <InputLabel>Filtrar por data final</InputLabel>
+                <DatePicker
+                  onAccept={(date) => {
+                    dispatch({
+                      type: "filtrar",
+                      payload: {
+                        data_fim: dayjs(date).toDate(),
+                      },
+                    });
+                  }}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                    },
+                  }}
+                  label="Data fim"
+                  className="ms-2"
+                  minDate={dayjs(data_inicio) ?? dayjs()}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col-2"></div>
           </div>
         </DialogContent>
       </Dialog>

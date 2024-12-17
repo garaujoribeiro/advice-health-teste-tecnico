@@ -120,8 +120,7 @@ export default function ConsultaIndexPage() {
         if (key === "medico_id") {
           value = medicos?.find((medico) => medico.id === value)?.nome || "";
         }
-        return value.toLowerCase()
-        .includes(search.toLowerCase());
+        return value.toLowerCase().includes(search.toLowerCase());
       })
     )
       return false;
@@ -136,17 +135,17 @@ export default function ConsultaIndexPage() {
       {
         field: "nome_cliente",
         headerName: "Cliente",
-        flex: 1,
+        width: 200,
       },
       {
         field: "telefone_cliente",
         headerName: "Telefone",
-        flex: 1,
+        width: 150,
       },
       {
         field: "cpf_cliente",
         headerName: "CPF do cliente",
-        flex: 1,
+        width: 200,
       },
       {
         field: "medico_id",
@@ -154,12 +153,12 @@ export default function ConsultaIndexPage() {
         renderCell({ value }) {
           return medicos.find((medico) => medico.id === value)?.nome || "";
         },
-        flex: 1,
+        width: 200,
       },
       {
         field: "hora",
         headerName: "Horário",
-        flex: 1,
+        width: 150,
         renderCell({ value }) {
           return dayjs(value as string).format("DD/MM/YYYY HH:mm");
         },
@@ -167,7 +166,7 @@ export default function ConsultaIndexPage() {
       {
         field: "pagamento",
         headerName: "Valor",
-        flex: 0.3,
+        width: 100,
         renderCell({ row: { medico_id: value } }) {
           const medico = medicos.find((medico) => medico.id === value);
 
@@ -199,7 +198,7 @@ export default function ConsultaIndexPage() {
             />
           );
         },
-        flex: 0.4,
+        width: 150,
       },
       {
         field: "pago",
@@ -221,7 +220,7 @@ export default function ConsultaIndexPage() {
             />
           );
         },
-        flex: 0.4,
+        width: 150,
       },
     ],
     [medicos]
@@ -236,14 +235,13 @@ export default function ConsultaIndexPage() {
   }, 400);
 
   return (
-    <div className="container-fluid row">
-      <Paper
-        sx={{
-          overflowX: "scroll",
-          scrollbarWidth: "thin",
-        }}
-        className="py-4"
-      >
+    <div
+      style={{
+        maxWidth: "95vw",
+      }}
+      className="container-fluid row"
+    >
+      <Paper className="py-4">
         <p className="h5">Consultar agendamentos</p>
 
         <div className="mt-4 d-flex justify-content-between">
@@ -273,14 +271,7 @@ export default function ConsultaIndexPage() {
           </FiltroContext.Provider>
         </div>
 
-        <div
-          style={{
-            minWidth: 1300,
-            overflow: "hidden",
-            scrollbarWidth: "thin",
-          }}
-          className="mt-4"
-        >
+        <div className="mt-4">
           <DataGrid
             rows={rowsFiltered}
             disableAutosize
