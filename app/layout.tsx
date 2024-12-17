@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Roboto_Flex } from "next/font/google";
 
 import "./globals.css";
-import LocalizationProviderWrapper from "./lib/LocalizationProvider";
-import CardMedico from "./_components/CardMedico/CardMedico";
+import Providers from "./_components/Providers/Providers";
 
 const roboto = Roboto_Flex({
   variable: "--font-roboto",
@@ -23,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={roboto.variable}>
-        <LocalizationProviderWrapper>{children}</LocalizationProviderWrapper>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

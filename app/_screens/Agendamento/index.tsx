@@ -1,37 +1,36 @@
-import AgendamentoTabWithCliente from "@/app/_components/AgendamentoTab/AgendamentoTabWithCliente";
+"use client";
+import BoxAgendamento from "@/app/_components/BoxAgendamento/BoxAgendamento";
 import BoxMedico from "@/app/_components/BoxMedico/BoxMedico";
 import DatePicker from "@/app/_components/DatePicker/DatePicker";
-import hoursArr from "@/utils/hours-arr";
-import { Paper } from "@mui/material";
 import dayjs from "dayjs";
+import { useState } from "react";
+
+const now = dayjs();
 
 export default function AgendamentoScreenIndex() {
+  const [data, setData] = useState(now);
   return (
     <div className="container-fluid row">
-      <div className="col-3">
+      <div className="col-3 d-flex flex-column gap-2">
         <div className="w-100">
           <BoxMedico />
         </div>
-        <div className="mt-2 w-100">
-          <DatePicker />
+        <div className="w-100 flex-grow-1">
+          <DatePicker
+            value={data}
+            sx={{
+              height: "100%",
+            }}
+            onChange={(v) => setData(v ?? dayjs())}
+            slotProps={{
+              actionBar: {
+                hidden: true,
+              }
+            }}
+          />
         </div>
       </div>
-      <Paper style={{
-        maxHeight: "85vh",
-        overflowY: "auto",
-        scrollbarWidth: "thin",
-      }} className="col-8 d-flex flex-column gap-2 p-2">
-        {hoursArr().map((hour, idx) => (
-          <AgendamentoTabWithCliente
-            toAdd={idx % 2 == 0}
-            key={idx}
-            hora={hour}
-            cliente="luiz"
-            especialidade="teste"
-            srcAvatar=""
-          />
-        ))}
-      </Paper>
+      <BoxAgendamento data={data} />
     </div>
   );
 }

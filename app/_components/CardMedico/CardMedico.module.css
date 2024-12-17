@@ -1,0 +1,9 @@
+.cardMedico {
+  transition: all 0.115s;
+  &:hover {
+    background-color: var(--bs-gray-300) !important;
+  };
+  &[data-selected="true"] {
+    background-color: var(--bs-gray-400) !important;
+  }
+}

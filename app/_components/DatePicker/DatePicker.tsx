@@ -1,11 +1,19 @@
-import { StaticDatePicker } from "@mui/x-date-pickers";
+import { cn } from "@/app/lib/cn";
+import {
+  PickerValidDate,
+  StaticDatePicker,
+  StaticDatePickerProps,
+} from "@mui/x-date-pickers";
 
-export default function DatePicker() {
+type DatePickerProps = StaticDatePickerProps<PickerValidDate>;
+
+export default function DatePicker(props: DatePickerProps) {
   return (
     <StaticDatePicker
       reduceAnimations
-      className="shadow-sm" 
-      showDaysOutsideCurrentMonth 
+      className={cn("shadow-sm", props?.className)}
+      showDaysOutsideCurrentMonth
+      {...props}
     />
   );
 }

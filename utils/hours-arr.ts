@@ -12,8 +12,5 @@ export default function hoursArr() {
       result.push(date);
     });
   }
-
-  console.log(result)
-
   return result;
 }

@@ -1,0 +1,7 @@
+.agendamentoTabContainer {
+  &[data-disabled="true"]{
+    background-color: var(--bs-gray-200) !important;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
