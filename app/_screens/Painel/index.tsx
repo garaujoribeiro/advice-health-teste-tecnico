@@ -28,7 +28,7 @@ export default function PainelScreenIndex() {
 
   return (
     <div className="container-fluid row">
-      <div className="col-9">
+      <div className="col-12 col-xl-9">
         <BoxInfoChart data={data!} />
 
         <div className="row mt-1">
@@ -48,7 +48,7 @@ export default function PainelScreenIndex() {
         </div>
       </div>
 
-      <div className="col-3">
+      <div className="col-12 mt-2 mt-xl-0 col-xl-3">
         <DatePicker
           value={data}
           slotProps={{
