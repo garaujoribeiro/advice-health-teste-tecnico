@@ -29,7 +29,6 @@ a {
   display: none; /* esconder a setinha do botao de dropdown */
 }
 
-
 :root,
 [data-bs-theme="light"] {
   --bs-blue: #0d6efd;
@@ -161,4 +160,6 @@ a {
   --layout-open: calc(var(--menu-icon-size) + 2 * var(--menu-padding));
   --layout-closed: 0;
   --transition-layout: width 0.2s;
+  --action-button-width: 32px;
+  --action-button-height: 32px;
 }

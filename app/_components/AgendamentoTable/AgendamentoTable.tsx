@@ -1,5 +1,5 @@
 "use client";
-import { Medicos, Agendamento } from "@/api/types";
+import { Medico, Agendamento } from "@/api/types";
 import { useAgendamentos } from "@/app/_hooks/useAgendamentos";
 import useMedicos from "@/app/_hooks/useMedicos";
 import getEspecialidades from "@/utils/especialidades";
@@ -38,12 +38,13 @@ export default function AgendamentoTable({
     getMedicosQuery: { data: dataMedicos },
   } = useMedicos();
 
+
   const agendamentos = useMemo(
     () => (data as Agendamento[]).filter(filterFn ?? (() => true)),
     [data, filterFn]
   );
 
-  const medicos = dataMedicos as Medicos[];
+  const medicos = dataMedicos as Medico[];
 
   const columns: GridColDef<Agendamento>[] = useMemo(
     () => [

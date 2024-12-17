@@ -25,6 +25,8 @@ export const agendamentoFormSchema = z.object({
   bairro: z.optional(z.string()),
   complemento: z.optional(z.string()),
   numero: z.optional(z.string()),
+  cidade: z.optional(z.string()),
+  uf: z.optional(z.string()),
 });
 
 export type AgendamentoFormSchema = z.infer<typeof agendamentoFormSchema>;

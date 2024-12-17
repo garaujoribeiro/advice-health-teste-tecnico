@@ -1,19 +1,15 @@
 "use client";
-import { Agendamento, Medicos } from "@/api/types";
+import { Agendamento, Medico } from "@/api/types";
 import AgendamentoTable from "@/app/_components/AgendamentoTable/AgendamentoTable";
 import FiltroConsultaModal from "@/app/_components/FiltroConsultaModal/FiltroConsultaModal";
-import { useAgendamentos } from "@/app/_hooks/useAgendamentos";
 import { useDebounce } from "@/app/_hooks/useDebounce";
 import useMedicos from "@/app/_hooks/useMedicos";
 import { APP_ROUTES } from "@/utils/app-routes";
-import getEspecialidades from "@/utils/especialidades";
 import { removeMask } from "@/utils/masks";
-import { Chip, Paper, TextField } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid/DataGrid";
-import { GridColDef } from "@mui/x-data-grid/models/colDef";
+import { Paper, TextField } from "@mui/material";
 import dayjs from "dayjs";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createContext, useMemo, useReducer } from "react";
+import { createContext, useCallback, useReducer } from "react";
 
 export const FiltroContext = createContext({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -81,151 +77,9 @@ export default function ConsultaIndexPage() {
     getMedicosQuery: { data },
   } = useMedicos();
 
-  const {
-    getAgendamentosQuery: { data: dataAgendamentos, isFetching },
-  } = useAgendamentos();
-
-  const rows = dataAgendamentos as Agendamento[];
-
-  const search = useSearchParams().get("search");
-
-  const medicos = data as Medicos[];
-
-  const rowsFiltered = rows.filter((row) => {
-    // filtro por atendimento
-    if (atendimento && !row.atendido) return false;
-
-    // filtro por pagamento
-    if (pagamento && !row.pago) return false;
-
-    // filtro por médico
-    if (medico_id && row.medico_id !== medico_id) return false;
-
-    // filtro por data inicio
-    if (data_inicio && dayjs(row.hora).isBefore(dayjs(data_inicio)))
-      return false;
-
-    // filtro por data fim
-    if (data_fim && dayjs(row.hora).isAfter(dayjs(data_fim))) return false;
-
-    // filtro por busca
-    if (
-      search &&
-      !Object.keys(row).some((key) => {
-        const rowKey = key as keyof typeof row;
-        let value = row[rowKey];
-        if (typeof value !== "string") return false;
-        if (key === "cpf_cliente" || key === "telefone_cliente") {
-          value = removeMask(value.toString());
-        }
-        if (key === "medico_id") {
-          value = medicos?.find((medico) => medico.id === value)?.nome || "";
-        }
-        return value.toLowerCase().includes(search.toLowerCase());
-      })
-    )
-      return false;
-
-    return true;
-  });
+  const medicos = data as Medico[];
 
   const router = useRouter();
-
-  const columns: GridColDef<Agendamento>[] = useMemo(
-    () => [
-      {
-        field: "nome_cliente",
-        headerName: "Cliente",
-        width: 200,
-      },
-      {
-        field: "telefone_cliente",
-        headerName: "Telefone",
-        width: 150,
-      },
-      {
-        field: "cpf_cliente",
-        headerName: "CPF do cliente",
-        width: 200,
-      },
-      {
-        field: "medico_id",
-        headerName: "Médico",
-        renderCell({ value }) {
-          return medicos.find((medico) => medico.id === value)?.nome || "";
-        },
-        width: 200,
-      },
-      {
-        field: "hora",
-        headerName: "Horário",
-        width: 150,
-        renderCell({ value }) {
-          return dayjs(value as string).format("DD/MM/YYYY HH:mm");
-        },
-      },
-      {
-        field: "pagamento",
-        headerName: "Valor",
-        width: 100,
-        renderCell({ row: { medico_id: value } }) {
-          const medico = medicos.find((medico) => medico.id === value);
-
-          return getEspecialidades(
-            medico?.especialidade ?? 0
-          )?.vl.toLocaleString("pt-BR", {
-            currency: "BRL",
-            style: "currency",
-          });
-        },
-      },
-      {
-        field: "atendido",
-        headerName: "Atendimento",
-        renderCell({ value }) {
-          return value ? (
-            <Chip
-              size="small"
-              className=""
-              label={<p className="m-0">Atendido</p>}
-              color="info"
-            />
-          ) : (
-            <Chip
-              size="small"
-              label={<p className="m-0">A atender</p>}
-              variant="filled"
-              color="warning"
-            />
-          );
-        },
-        width: 150,
-      },
-      {
-        field: "pago",
-        headerName: "Pagamento",
-        renderCell({ value }) {
-          return value ? (
-            <Chip
-              size="small"
-              className=""
-              label={<p className="m-0">Pago</p>}
-              color="success"
-            />
-          ) : (
-            <Chip
-              size="small"
-              label={<p className="m-0">A pagar</p>}
-              variant="filled"
-              color="error"
-            />
-          );
-        },
-        width: 150,
-      },
-    ],
-    [medicos]
-  );
 
   const handleSearch = (value: string) => {
     router.push(`${APP_ROUTES.consulta.href}?search=${value}`);
@@ -234,6 +88,49 @@ export default function ConsultaIndexPage() {
   const debouncedSearch = useDebounce((value: string) => {
     handleSearch(value);
   }, 400);
+
+  const search = useSearchParams().get("search");
+
+  const filterFn = useCallback(
+    (row: Agendamento) => {
+      // filtro por atendimento
+      if (atendimento && !row.atendido) return false;
+
+      // filtro por pagamento
+      if (pagamento && !row.pago) return false;
+
+      // filtro por médico
+      if (medico_id && row.medico_id !== medico_id) return false;
+
+      // filtro por data inicio
+      if (data_inicio && dayjs(row.hora).isBefore(dayjs(data_inicio)))
+        return false;
+
+      // filtro por data fim
+      if (data_fim && dayjs(row.hora).isAfter(dayjs(data_fim))) return false;
+
+      // filtro por busca
+      if (
+        search &&
+        !Object.keys(row).some((key) => {
+          const rowKey = key as keyof typeof row;
+          let value = row[rowKey];
+          if (typeof value !== "string") return false;
+          if (key === "cpf_cliente" || key === "telefone_cliente") {
+            value = removeMask(value.toString());
+          }
+          if (key === "medico_id") {
+            value = medicos?.find((medico) => medico.id === value)?.nome || "";
+          }
+          return value.toLowerCase().includes(search.toLowerCase());
+        })
+      )
+        return false;
+
+      return true;
+    },
+    [atendimento, data_fim, data_inicio, medico_id, medicos, pagamento, search]
+  );
 
   return (
     <div
@@ -274,6 +171,7 @@ export default function ConsultaIndexPage() {
 
         <div className="mt-4">
           <AgendamentoTable
+            filterFn={filterFn}
             dataGridProps={{
               initialState: {
                 pagination: {

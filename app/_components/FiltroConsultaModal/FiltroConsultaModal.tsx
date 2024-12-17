@@ -1,5 +1,5 @@
 "use client";
-import { Medicos } from "@/api/types";
+import { Medico } from "@/api/types";
 import { FiltroContext } from "@/app/_screens/Consulta";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import {
@@ -9,10 +9,7 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  FormControl,
   InputLabel,
-  Radio,
-  RadioGroup,
   TextField,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -20,7 +17,7 @@ import dayjs from "dayjs";
 import { useCallback, useContext, useState } from "react";
 
 interface FiltroConsultaModalProps {
-  medicosFiltered: Medicos[];
+  medicosFiltered: Medico[];
 }
 
 export default function FiltroConsultaModal({
@@ -32,10 +29,8 @@ export default function FiltroConsultaModal({
     setOpen(false);
   }, []);
 
-  const { dispatch, medico_id, atendimento, hora_fim, data_inicio, pagamento } =
+  const { dispatch, medico_id, atendimento, data_inicio, pagamento } =
     useContext(FiltroContext);
-
-  console.log(atendimento, pagamento);
 
   return (
     <>
@@ -50,9 +45,11 @@ export default function FiltroConsultaModal({
 
       <Dialog fullWidth maxWidth="lg" open={open} onClose={handleClose}>
         <DialogTitle>Filtrar listagem</DialogTitle>
-        <DialogContent sx={{
-          padding: "24px 32px",
-        }}>
+        <DialogContent
+          sx={{
+            padding: "24px 32px",
+          }}
+        >
           <div className="row py-4">
             <div className="col-8">
               <InputLabel>Filtrar por médico</InputLabel>

@@ -1,7 +1,7 @@
 "use client";
 import { useAgendamentos } from "@/app/_hooks/useAgendamentos";
 import InfoChart from "../InfoChart/InfoChart";
-import { Agendamento, Medicos } from "@/api/types";
+import { Agendamento, Medico } from "@/api/types";
 import useMedicos from "@/app/_hooks/useMedicos";
 import getEspecialidades from "@/utils/especialidades";
 import dayjs, { Dayjs } from "dayjs";
@@ -38,7 +38,7 @@ export default function BoxInfoChart({ data: date }: { data: Dayjs }) {
       }),
     [data, date]
   );
-  const medicos = dataMedicos as Medicos[];
+  const medicos = dataMedicos as Medico[];
 
   const faturamento = agendamentos.reduce((acc, agendamento) => {
     if (agendamento.pago) {

@@ -46,7 +46,6 @@ export default function ModalAgendamento({
   hora,
   refetch,
 }: ModalAgendamentoProps) {
-  console.log(hora);
   const form = useForm<AgendamentoFormSchema>({
     shouldFocusError: true,
     mode: "onSubmit",

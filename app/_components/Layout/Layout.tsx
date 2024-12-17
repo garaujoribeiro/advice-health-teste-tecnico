@@ -11,7 +11,7 @@ import styles from "./Layout.module.css";
 import IconButton from "../ui/ButtonIcon/ButtonIcon";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   return (
     <main className="d-flex flex-column h-100 container-fluid">

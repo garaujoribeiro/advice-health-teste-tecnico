@@ -3,8 +3,7 @@
 import AgendamentoTabWithCliente from "../AgendamentoTab/AgendamentoTabWithCliente";
 import hoursArr from "@/utils/hours-arr";
 import useMedicos from "@/app/_hooks/useMedicos";
-import { useSearchParams } from "next/navigation";
-import { Agendamento, Medicos } from "@/api/types";
+import { Agendamento, Medico } from "@/api/types";
 import getMedicoAtendeEsseHorario from "@/utils/medicoAtende";
 import { createContext, useReducer } from "react";
 import ModalAgendamento from "../Form/AgendamentoForm";
@@ -35,10 +34,11 @@ export const MenuContext = createContext({
 
 interface BoxAgendamentoProps {
   data: Dayjs;
+  med: string | null;
 }
 
 export default function BoxAgendamento({
-  data: dataCalendario,
+  data: dataCalendario, med
 }: BoxAgendamentoProps) {
   const [{ open, modalType, hora, agendamentoId }, dispatch] = useReducer(
     (state, action) => {
@@ -74,12 +74,11 @@ export default function BoxAgendamento({
   const agendamentos = getAgendamentosQuery.data as Agendamento[];
   const refetch = getAgendamentosQuery.refetch;
 
-  const med = useSearchParams().get("med");
   const {
     getMedicoQuery: { data },
   } = useMedicos({ medicoId: med ?? "" });
 
-  const medico = data as Medicos;
+  const medico = data as Medico;
 
   return (
     <>
@@ -136,7 +135,7 @@ export default function BoxAgendamento({
               telefone={agendamento?.telefone_cliente ?? ""}
               pago={agendamento?.pago ?? 0}
               id={agendamento?.id ?? ""}
-              atendido={agendamento?.atendido ?? (false as boolean)}
+              atendido={agendamento?.atendido ?? 0}
               disabled={
                 !getMedicoAtendeEsseHorario({
                   horario: hour,

@@ -3,10 +3,11 @@ import { Agendamento } from "@/api/types";
 import AgendamentoTable from "@/app/_components/AgendamentoTable/AgendamentoTable";
 import BoxInfoChart from "@/app/_components/BoxInfoChart/BoxInfoChart";
 import BoxMedico from "@/app/_components/BoxMedico/BoxMedico";
+import BoxMedicoSkeleton from "@/app/_components/BoxMedico/BoxMedicoSkeleton";
 import DatePicker from "@/app/_components/DatePicker/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { Suspense, useCallback, useState } from "react";
 
 export default function PainelScreenIndex() {
   const [data, setData] = useState<Dayjs | null>(dayjs());
@@ -60,7 +61,9 @@ export default function PainelScreenIndex() {
         />
 
         <div className="mt-1">
-          <BoxMedico />
+          <Suspense fallback={<BoxMedicoSkeleton />}>
+            <BoxMedico />
+          </Suspense>
         </div>
       </div>
     </div>

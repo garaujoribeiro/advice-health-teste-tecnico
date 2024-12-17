@@ -1,4 +1,4 @@
-export type Medicos = {
+export type Medico = {
   id: string,
   nome: string,
   especialidade: 0 | 1 | 2,

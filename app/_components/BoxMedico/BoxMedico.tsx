@@ -6,7 +6,7 @@ import useMedicos from "@/app/_hooks/useMedicos";
 import getEspecialidades from "@/utils/especialidades";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Medicos } from "@/api/types";
+import { Medico } from "@/api/types";
 import BoxMedicoSkeleton from "./BoxMedicoSkeleton";
 
 export default function BoxMedico() {
@@ -14,7 +14,7 @@ export default function BoxMedico() {
     getMedicosQuery: { data, isLoading },
   } = useMedicos();
 
-  const medicos = data as Medicos[];
+  const medicos = data as Medico[];
 
   const searchParam = useSearchParams();
   const med = searchParam.get("med");

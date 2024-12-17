@@ -8,3 +8,5 @@
   padding: 2px !important;
   &:hover {
     background-color: var(--bs-gray-300);
+  }
+}
