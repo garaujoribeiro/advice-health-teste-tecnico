@@ -20,6 +20,7 @@ import { useSearchParams } from "next/navigation";
 import useMedicos from "@/app/_hooks/useMedicos";
 import { useMemo } from "react";
 import getMedicoAtendeEsseHorario from "@/utils/medicoAtende";
+import useSnackbar from "@/app/_hooks/useSnackbar";
 
 interface ModalAgendamentoTransferenciaProps {
   open: boolean;
@@ -36,11 +37,17 @@ export default function ModalAgendamentoTransferencia({
 }: ModalAgendamentoTransferenciaProps) {
   const form = useForm();
 
+  const { showSnackbar } = useSnackbar();
+
   const { putAgendamentoMutation } = useAgendamentosMutations({
     agendamentoId,
     config: {
       onSuccess: () => {
         dispatch({ type: "close" });
+        showSnackbar({
+          message: "Operação realizada com sucesso!",
+          alertProps: { severity: "success" },
+        });
         refetch();
       },
     },
@@ -76,7 +83,12 @@ export default function ModalAgendamentoTransferencia({
           horario: agendamento.hora,
           horario_entrada: medico.horario_entrada,
           horario_saida: medico.horario_saida,
-        }) && !(agendamentos as Agendamento[]).some((agendamentoToCompare) => agendamentoToCompare.medico_id === medico.id && agendamento.hora === agendamentoToCompare.hora)
+        }) &&
+        !(agendamentos as Agendamento[]).some(
+          (agendamentoToCompare) =>
+            agendamentoToCompare.medico_id === medico.id &&
+            agendamento.hora === agendamentoToCompare.hora
+        )
     );
   }, [medicos, especialidade, agendamento.hora, agendamentos]);
 

@@ -28,6 +28,7 @@ import { Agendamento, AgendamentoDTO } from "@/api/types";
 import { useSearchParams } from "next/navigation";
 import { ModalType } from "../BoxAgendamento/BoxAgendamento";
 import { useEffect } from "react";
+import useSnackbar from "@/app/_hooks/useSnackbar";
 
 interface ModalAgendamentoProps {
   open: boolean;
@@ -54,6 +55,8 @@ export default function ModalAgendamento({
     resolver: zodResolver(agendamentoFormSchema),
   });
 
+  const { showSnackbar } = useSnackbar();
+
   const queryCep = useDebounce(async (cep: string) => {
     if (cep.length < 9) return;
     try {
@@ -79,6 +82,10 @@ export default function ModalAgendamento({
       config: {
         onSuccess: () => {
           dispatch({ type: "close" });
+          showSnackbar({
+            message: "Operação realizada com sucesso!",
+            alertProps: { severity: "success" },
+          });
           refetch();
         },
       },

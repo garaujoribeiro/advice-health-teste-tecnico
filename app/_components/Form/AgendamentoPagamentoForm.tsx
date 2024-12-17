@@ -16,6 +16,7 @@ import {
 import { Agendamento } from "@/api/types";
 import { useSearchParams } from "next/navigation";
 import { ModalType } from "../BoxAgendamento/BoxAgendamento";
+import useSnackbar from "@/app/_hooks/useSnackbar";
 
 interface ModalAgendamentoWithDeleteProps {
   open: boolean;
@@ -34,12 +35,18 @@ export default function ModalAgendamentoWithDelete({
 }: ModalAgendamentoWithDeleteProps) {
   const form = useForm();
 
+  const { showSnackbar } = useSnackbar();
+
   const { putAgendamentoMutation, deleteAgendamentoMutation } =
     useAgendamentosMutations({
       agendamentoId,
       config: {
         onSuccess: () => {
           dispatch({ type: "close" });
+          showSnackbar({
+            message: "Operação realizada com sucesso!",
+            alertProps: { severity: "success" },
+          });
           refetch();
         },
       },
@@ -81,16 +88,19 @@ export default function ModalAgendamentoWithDelete({
           }
 
           if (modalType === ModalType.ATENDER && agendamentoId) {
-            putAgendamentoMutation.mutate({
-              ...agendamento,
-              id: agendamentoId,
-              atendido: 1,
-            }, {
-              onSuccess: () => {
-                dispatch({ type: "close" });
-                refetch();
+            putAgendamentoMutation.mutate(
+              {
+                ...agendamento,
+                id: agendamentoId,
+                atendido: 1,
               },
-            });
+              {
+                onSuccess: () => {
+                  dispatch({ type: "close" });
+                  refetch();
+                },
+              }
+            );
             return;
           }
 
