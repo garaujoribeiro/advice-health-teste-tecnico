@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Teste técnico Advice Health
 
-## Getting Started
+## Uso
 
-First, run the development server:
+Para iniciar a aplicação, execute:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+`npm run build`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Espere a aplicação terminar o build, execute:
+`npm run start`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+A aplicação estará disponível em `http://localhost:3000`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Descrição
 
-## Learn More
+Este projeto foi desenvolvido utilizando **Next.js** como framework de React. O **Bootstrap** foi utilizado principalmente para a construção dos grids do layout, enquanto o **Material UI** foi empregado para os componentes. A aplicação oferece suporte a telas Full HD, HD e tablets; abaixo dessas resoluções, a experiência do usuário pode cair drasticamente.
 
-To learn more about Next.js, take a look at the following resources:
+Para semear a aplicação com dados, estou utilizando um **json-server**, e no front-end estou consumindo os dados através do **React Query**. A escolha pelo React Query se deve ao fato de que, em alguns momentos, ele é utilizado como gerenciador de estados, como na terceira tela, onde preciso realizar um refetch de uma query em um componente que não está vinculada ou dependendo dessa query. Sempre que possível, transmiti o refetch diretamente para manter uma única fonte de verdade, mas é importante ter a flexibilidade que o React Query proporciona.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Como Funciona a Aplicação
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Tela Inicial
 
-## Deploy on Vercel
+A primeira tela é bem simples e apresenta alguns números estatísticos de acordo com a data selecionada. A caixinha com os médicos leva o usuário para a página de agendamento com o médico já selecionado, além de exibir uma tabela com os agendamentos do dia escolhido e a possibilidade de acessar diretamente a página daquele agendamento ao clicar na linha. O layout também conta com um menu simples que se esconde, contendo alguns ícones para navegação e um tooltip para acessibilidade.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Página de Agendamento
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+A segunda página, a página de agendamento, é o coração da aplicação. Nela, você pode selecionar a data e o médico e realizar agendamentos, editar, transferir e excluir agendamentos, além de fazer pagamentos e atendimentos.
+
+> **Disclaimer 1**: A rotina de pagamento e atendimento não é ideal; atualmente, há apenas um botão para pagar ou agendar. Isso não seria funcional em produção. Entretanto, a falta de um backend robusto gera impedimentos para a criação de um sistema de pagamento real. Gerenciar múltiplas relações sem um banco de dados robusto, como geralmente se vê em entidades de pagamento, criaria uma complexidade muito grande para a aplicação e preferi evitar.
+
+### Página Administrativa
+
+Na terceira página, imaginei que essa seria uma espécie de página administrativa, permitindo verificar todos os agendamentos. Nela é possível filtrar por pesquisa e aplicar filtros avançados como pagamento, atendimento, médico e data.
+
+## Tecnologias Utilizadas
+
+- Next.js
+- Bootstrap
+- Material UI
+- json-server
+- React Query
+
+## Instalação
+
+Instruções sobre como instalar e configurar o projeto:
+
+1. Clone o repositório:
+git clone https://github.com/usuario/nome-do-repositorio.git
+text
+2. Navegue até o diretório do projeto:
+cd nome-do-repositorio
+text
+3. Instale as dependências:
+npm install
+text
+
+## Uso
+
+Para iniciar a aplicação, execute:
+
+`npm run build`
+
+Espere a aplicação terminar o build, execute:
+`npm run start`
+
+A aplicação estará disponível em `http://localhost:3000`.
+
+## Feedback
+Feedbacks sao bem vindos, abra uma issue para que eu possa melhorar a aplicação e como desenvolver!
+
+## Licença
+
+Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
