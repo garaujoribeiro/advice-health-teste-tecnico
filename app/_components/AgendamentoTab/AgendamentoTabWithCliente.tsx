@@ -2,78 +2,214 @@
 import hourFormatter from "@/utils/hour-formatter";
 import Avatar from "@mui/material/Avatar";
 import Image from "next/image";
-import CreditCardIcon from "../icons/CreditCard";
 import PencilSquareIcon from "../icons/PencilSquare";
 import TrashIcon from "../icons/Trash";
-import { IconButton } from "@mui/material";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import RepeatIcon from "@mui/icons-material/Repeat";
+import { Chip, IconButton } from "@mui/material";
+import styles from "./AgendamentoTab.module.css";
+import { cn } from "@/app/lib/cn";
+import { useContext } from "react";
+import { MenuContext, ModalType } from "../BoxAgendamento/BoxAgendamento";
 
 export interface AgendamentoTabProps {
   hora: Date;
   cliente: string;
-  srcAvatar: string;
-  especialidade: string;
+  cpf: string;
+  telefone: string;
   disabled?: boolean;
+  pago: 0 | 1;
   toAdd?: boolean;
+  id?: string;
+  atendido?: boolean;
 }
 
 export default function AgendamentoTabWithCliente({
-  especialidade,
+  cpf,
   hora,
   cliente,
-  srcAvatar,
   toAdd,
   disabled,
+  telefone,
+  pago,
+  id,
+  atendido
 }: AgendamentoTabProps) {
-  console.log(hora)
+  const { dispatch } = useContext(MenuContext);
+
   return (
-    <div style={{minHeight: "80px"}} className="container-fluid w-100 d-flex align-items-center gap-4 bg-white p-2 rounded shadow-sm border rounded">
+    <div
+      data-disabled={disabled ?? undefined}
+      style={{ minHeight: "80px" }}
+      className={cn(
+        "container-fluid w-100 d-flex align-items-center gap-4 bg-white p-2 rounded shadow-sm border rounded",
+        styles.agendamentoTabContainer
+      )}
+    >
       <div>
         <p className="h2">{hourFormatter(hora)}</p>
       </div>
 
-      {!toAdd && (
+      {disabled && (
         <div className="d-flex gap-2 align-items-center p-2 flex-grow-1">
-          <Avatar
-            alt={cliente}
-            className="shadow-lg"
-            slots={{
-              img: ({ alt }) => (
-                <Image
-                  src={srcAvatar as string}
-                  layout="fill"
-                  alt={alt ?? ""}
-                />
-              ),
-            }}
-          />
-          <div>
-            <h4 className="h5 mb-0">{cliente}</h4>
-            <p className="mb-0 caption">
-              <small>{especialidade}</small>
-            </p>
-          </div>
+          <p className="text-body-emphasis text-center w-100">
+            Medico não atende nesse horário
+          </p>
         </div>
       )}
 
-      {!toAdd ? <ul className="list-unstyled d-flex gap-2 align-items-center m-0">
-        <li>
-          <IconButton size="small">
-            <CreditCardIcon height={20} width={20} />
-          </IconButton>
-        </li>
-        <li>
-          <IconButton size="small">
-            <PencilSquareIcon height={20} width={20} />
-          </IconButton>
-        </li>
-        <li>
-          <IconButton size="small">
-            <TrashIcon height={20} width={20} />
-          </IconButton>
-        </li>
-      </ul> : <IconButton className="ms-auto" size="medium">
-            <TrashIcon height={24} width={24} />
-          </IconButton>}
+      {!toAdd && !disabled && (
+        <div className="d-flex gap-2 align-items-center p-2 flex-grow-1">
+          <div>
+            <p
+              style={{
+                whiteSpace: "nowrap",
+              }}
+              className="mb-0 caption d-flex flex-column gap-1 text-nowrap"
+            >
+              <small>{cpf}</small>
+              <small>{telefone}</small>
+            </p>
+          </div>
+
+          <h4
+            style={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              maxWidth: "300px",
+            }}
+            title={cliente}
+            className="h5 ms-3"
+          >
+            {cliente}
+          </h4>
+        </div>
+      )}
+
+      <div className="d-flex gap-2 flex-column">
+        {disabled || toAdd ? null : (
+          <div>
+            {atendido ? (
+              <Chip size="small" className="" label={<p className="m-0 fw-semibold">Atendido</p>} color="info" />
+            ) : (
+              <Chip
+                size="small"
+                label={<p className="m-0 fw-semibold">Atender</p>}
+                onClick={() => {
+                  dispatch({
+                    type: "open",
+                    payload: {
+                      modalType: ModalType.ATENDER,
+                      hora,
+                      id,
+                    },
+                  });
+                }}
+                variant="filled"
+                color="warning"
+              />
+            )}
+          </div>
+        )}
+
+        {disabled || toAdd ? null : (
+          <div>
+            {pago ? (
+              <Chip size="small" className="" label={<p className="m-0 fw-semibold">Pago</p>} color="success" />
+            ) : (
+              <Chip
+                size="small"
+                label={<p className="m-0 fw-semibold">Pagar</p>}
+                onClick={() => {
+                  dispatch({
+                    type: "open",
+                    payload: {
+                      modalType: ModalType.PAGAR,
+                      hora,
+                      id,
+                    },
+                  });
+                }}
+                variant="filled"
+                color="error"
+              />
+            )}
+          </div>
+        )}
+      </div>
+
+      {disabled ? null : !toAdd ? (
+        <ul className="list-unstyled d-flex gap-2 align-items-center m-0">
+          <li>
+            <IconButton
+              onClick={() => {
+                dispatch({
+                  type: "open",
+                  payload: {
+                    modalType: ModalType.TRANSFERIR,
+                    hora,
+                    id,
+                  },
+                });
+              }}
+              size="small"
+            >
+              <RepeatIcon height={20} width={20} />
+            </IconButton>
+          </li>
+          <li>
+            <IconButton
+              onClick={() => {
+                dispatch({
+                  type: "open",
+                  payload: {
+                    modalType: ModalType.EDIT,
+                    hora,
+                    id,
+                  },
+                });
+              }}
+              size="small"
+            >
+              <PencilSquareIcon height={20} width={20} />
+            </IconButton>
+          </li>
+          <li>
+            <IconButton
+              onClick={() => {
+                dispatch({
+                  type: "open",
+                  payload: {
+                    modalType: ModalType.DELETE,
+                    hora,
+                    id,
+                  },
+                });
+              }}
+              size="small"
+            >
+              <TrashIcon height={20} width={20} />
+            </IconButton>
+          </li>
+        </ul>
+      ) : (
+        <IconButton
+          onClick={() => {
+            dispatch({
+              type: "open",
+              payload: {
+                modalType: ModalType.ADD,
+                hora,
+              },
+            });
+          }}
+          className="ms-auto"
+          size="medium"
+        >
+          <AddCircleOutlineIcon height={24} width={24} />
+        </IconButton>
+      )}
     </div>
   );
 }

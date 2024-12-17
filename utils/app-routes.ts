@@ -1,21 +1,21 @@
-import BookOpen from "@/app/_components/icons/BookOpen";
-import DocumentMagnify from "@/app/_components/icons/DocumentMagnify";
-import PresentationChartSvg from "@/app/_components/icons/PresentationChart";
+import BarChartIcon from '@mui/icons-material/BarChart';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 
 export const APP_ROUTES = {
   painel: {
     href: "/",
     label: "Relatório",
-    icon: PresentationChartSvg
+    icon: BarChartIcon
   },
   agendamento: {
     href: "/agendamento",
     label: "Agendamento",
-    icon: BookOpen
+    icon: MenuBookIcon
   },
   consulta: {
     href: "/consulta",
     label: "Consulta",
-    icon:  DocumentMagnify
+    icon:  ManageSearchIcon
   }
 }
