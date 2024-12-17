@@ -14,6 +14,7 @@ const xLabels = [
 ];
 
 export default function AgendamentosSemanaisChart() {
+
   return (
     <ChartContainer label="Agendamentos semanais">
       <LineChart

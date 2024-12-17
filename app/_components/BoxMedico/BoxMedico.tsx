@@ -29,6 +29,7 @@ export default function BoxMedico() {
                   imageSrc={`http://localhost:3000/avatars/${avatar}`}
                   nome={nome}
                   especialidade={getEspecialidades(especialidade).nome}
+                  valor={getEspecialidades(especialidade).vl}
                   selected={med === id}
                 />
               </li>
