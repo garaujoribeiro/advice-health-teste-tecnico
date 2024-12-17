@@ -31,12 +31,8 @@ export const editAdminSchema = z.object({
   medico_id: z.string().min(1, {
     message: formErrorMessages.campoObrigatorio("médico"),
   }),
-  atendido: z.number().min(0).max(1).min(1, {
-    message: formErrorMessages.campoObrigatorio("atendido"),
-  }),
-  pago: z.number().min(0).max(1).min(1, {
-    message: formErrorMessages.campoObrigatorio("pago"),
-  }),
+  atendido: z.number().min(0).max(1),
+  pago: z.number().min(0).max(1),
 });
 
 export type EditAdminSchema = z.infer<typeof editAdminSchema>;

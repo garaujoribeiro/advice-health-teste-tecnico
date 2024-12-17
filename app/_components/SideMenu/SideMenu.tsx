@@ -12,7 +12,6 @@ export default function SideMenu({ open }: { open: boolean }) {
           const {
             href,
             icon: Icon,
-            label,
           } = APP_ROUTES[key as keyof typeof APP_ROUTES];
           return (
             <Link
