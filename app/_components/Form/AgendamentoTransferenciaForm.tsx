@@ -17,7 +17,6 @@ import {
 } from "@/app/_hooks/useAgendamentos";
 import { Agendamento, Medicos } from "@/api/types";
 import { useSearchParams } from "next/navigation";
-import { ModalType } from "../BoxAgendamento/BoxAgendamento";
 import useMedicos from "@/app/_hooks/useMedicos";
 import { useMemo } from "react";
 

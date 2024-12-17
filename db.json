@@ -20,7 +20,7 @@
       "id": "11acdf4f-1953-4984-ad07-e5d55aced45e-2024-12-16T14:30:47.911Z-111.111.111-11",
       "hora": "2024-12-16T14:30:47.911Z",
       "medico_id": "9fb93ecb-6249-4b7f-bb68-80d061c2c986",
-      "pago": 0,
+      "pago": 1,
       "atendido": 0,
       "nome_cliente": "acho que agora vai",
       "telefone_cliente": "(11) 11111-1111",
@@ -132,6 +132,20 @@
       "complemento_cliente": "",
       "bairro_cliente": "",
       "atendido": 1
+    },
+    {
+      "id": "fdc1091f-71c4-483c-9a39-9bda660fd677-2024-12-17T13:00:00.000Z-123.123.123-12",
+      "hora": "2024-12-17T13:00:00.000Z",
+      "medico_id": "97b46cf1-e7bc-4181-8fe2-11c3e26b58ea",
+      "pago": 1,
+      "nome_cliente": "qsdasdasd",
+      "telefone_cliente": "(12) 31231-2312",
+      "cpf_cliente": "123.123.123-12",
+      "cep_cliente": "60713-180",
+      "endereco_cliente": "Rua Júlio Maciel",
+      "numero_cliente": "",
+      "complemento_cliente": "",
+      "bairro_cliente": "Manoel Sátiro"
     }
   ],
   "medicos": [
