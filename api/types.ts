@@ -21,6 +21,7 @@ export type Agendamento = {
   numero_cliente: string,
   complemento_cliente: string,
   bairro_cliente: string
+  atendido: 0 | 1
 }
 
 export type AgendamentoDTO = {

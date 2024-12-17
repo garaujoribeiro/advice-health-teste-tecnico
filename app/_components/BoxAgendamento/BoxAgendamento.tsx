@@ -20,6 +20,7 @@ export enum ModalType {
   DELETE = "DELETE",
   PAGAR = "PAGAR",
   TRANSFERIR = "TRANSFERIR",
+  ATENDER = "ATENDER",
 }
 
 export const MenuContext = createContext({
@@ -85,80 +86,71 @@ export default function BoxAgendamento({
 
   return (
     <>
-      <Paper
-        style={{
-          maxHeight: "85vh",
-          overflowY: "auto",
-          scrollbarWidth: "thin",
+      <MenuContext
+        value={{
+          dispatch,
         }}
-        className="col-8 d-flex flex-column gap-2 p-2"
       >
-        <MenuContext
-          value={{
-            dispatch,
-          }}
-        >
-          {hoursArr().map((hour) => {
-            const horaDoTab = dayjs(hour).hour();
-            const minutoDoTab = dayjs(hour).minute();
-            const diaDoTab = dayjs(dataCalendario).date();
-            const mesDoTab = dayjs(dataCalendario).month();
-            const anoDoTab = dayjs(dataCalendario).year();
+        {hoursArr().map((hour) => {
+          const horaDoTab = dayjs(hour).hour();
+          const minutoDoTab = dayjs(hour).minute();
+          const diaDoTab = dayjs(dataCalendario).date();
+          const mesDoTab = dayjs(dataCalendario).month();
+          const anoDoTab = dayjs(dataCalendario).year();
 
-            const agendamento = agendamentos.find(({ medico_id, hora, id }) => {
-              const horaDoAgendamento = dayjs(hora).hour();
-              const minutoDoAgendamento = dayjs(hora).minute();
-              const diaDoAgendamento = dayjs(hora).date();
-              const mesDoAgendamento = dayjs(hora).month();
-              const anoDoAgendamento = dayjs(hora).year();
+          const agendamento = agendamentos.find(({ medico_id, hora, id }) => {
+            const horaDoAgendamento = dayjs(hora).hour();
+            const minutoDoAgendamento = dayjs(hora).minute();
+            const diaDoAgendamento = dayjs(hora).date();
+            const mesDoAgendamento = dayjs(hora).month();
+            const anoDoAgendamento = dayjs(hora).year();
 
-              // disclaimer: essa forma de buscar o agendamento é extremamente ineficiente, entrentanto por falta de um
-              // back-end de verdade, não um mock, não é possível fazer uma busca eficiente
+            // disclaimer: essa forma de buscar o agendamento é extremamente ineficiente, entrentanto por falta de um
+            // back-end de verdade, não um mock, não é possível fazer uma busca eficiente
 
-              const isTheSameHour =
-                horaDoTab === horaDoAgendamento &&
-                minutoDoTab === minutoDoAgendamento &&
-                diaDoAgendamento === diaDoTab &&
-                mesDoAgendamento === mesDoTab &&
-                anoDoAgendamento === anoDoTab;
+            const isTheSameHour =
+              horaDoTab === horaDoAgendamento &&
+              minutoDoTab === minutoDoAgendamento &&
+              diaDoAgendamento === diaDoTab &&
+              mesDoAgendamento === mesDoTab &&
+              anoDoAgendamento === anoDoTab;
 
-              return medico_id === medico.id && isTheSameHour;
-              // existe um metodo para comparar diretamente, o isSame do dayjs, porem algumas datas acabam mudando na questao de milissegundos gerando falsos negativos
-              // disclaimer-again: essa forma de buscar o agendamento é realmente extremamente ineficiente, entrentanto por falta de um
-              // back-end de verdade, não um mock, não é possível fazer uma busca eficiente
-              // perdão
-            });
+            return medico_id === medico.id && isTheSameHour;
+            // existe um metodo para comparar diretamente, o isSame do dayjs, porem algumas datas acabam mudando na questao de milissegundos gerando falsos negativos
+            // disclaimer-again: essa forma de buscar o agendamento é realmente extremamente ineficiente, entrentanto por falta de um
+            // back-end de verdade, não um mock, não é possível fazer uma busca eficiente
+            // perdão
+          });
 
-            const fullDataCalendario = dayjs(
-              `${anoDoTab}-${
-                mesDoTab + 1
-              }-${diaDoTab} ${horaDoTab}:${minutoDoTab}`,
-              "YYYY-MM-DD HH:mm"
-            ).toDate();
+          const fullDataCalendario = dayjs(
+            `${anoDoTab}-${
+              mesDoTab + 1
+            }-${diaDoTab} ${horaDoTab}:${minutoDoTab}`,
+            "YYYY-MM-DD HH:mm"
+          ).toDate();
 
-            return (
-              <AgendamentoTabWithCliente
-                toAdd={!agendamento}
-                key={agendamento?.id ?? hour.toISOString()}
-                hora={fullDataCalendario}
-                cliente={agendamento?.nome_cliente ?? ""}
-                cpf={agendamento?.cpf_cliente ?? ""}
-                telefone={agendamento?.telefone_cliente ?? ""}
-                pago={agendamento?.pago ?? 0}
-                id={agendamento?.id ?? ""}
-                srcAvatar=""
-                disabled={
-                  !getMedicoAtendeEsseHorario({
-                    horario: hour,
-                    horario_entrada: medico.horario_entrada ?? 0,
-                    horario_saida: medico.horario_saida ?? 0,
-                  })
-                }
-              />
-            );
-          })}
-        </MenuContext>
-      </Paper>
+          return (
+            <AgendamentoTabWithCliente
+              toAdd={!agendamento}
+              key={agendamento?.id ?? hour.toISOString()}
+              hora={fullDataCalendario}
+              cliente={agendamento?.nome_cliente ?? ""}
+              cpf={agendamento?.cpf_cliente ?? ""}
+              telefone={agendamento?.telefone_cliente ?? ""}
+              pago={agendamento?.pago ?? 0}
+              id={agendamento?.id ?? ""}
+              atendido={agendamento?.atendido ?? false}
+              disabled={
+                !getMedicoAtendeEsseHorario({
+                  horario: hour,
+                  horario_entrada: medico.horario_entrada ?? 0,
+                  horario_saida: medico.horario_saida ?? 0,
+                })
+              }
+            />
+          );
+        })}
+      </MenuContext>
 
       {modalType === ModalType.ADD || modalType === ModalType.EDIT ? (
         <ModalAgendamento
@@ -171,7 +163,9 @@ export default function BoxAgendamento({
         />
       ) : null}
 
-      {modalType === ModalType.PAGAR || modalType === ModalType.DELETE ? (
+      {modalType === ModalType.PAGAR ||
+      modalType === ModalType.DELETE ||
+      modalType === ModalType.ATENDER ? (
         <ModalAgendamentoWithDelete
           refetch={refetch}
           dispatch={dispatch}

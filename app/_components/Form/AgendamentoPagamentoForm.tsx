@@ -80,6 +80,20 @@ export default function ModalAgendamentoWithDelete({
             return;
           }
 
+          if (modalType === ModalType.ATENDER && agendamentoId) {
+            putAgendamentoMutation.mutate({
+              ...agendamento,
+              id: agendamentoId,
+              atendido: 1,
+            }, {
+              onSuccess: () => {
+                dispatch({ type: "close" });
+                refetch();
+              },
+            });
+            return;
+          }
+
           deleteAgendamentoMutation.mutate();
         }),
       }}
@@ -89,7 +103,9 @@ export default function ModalAgendamentoWithDelete({
           ? "Pagar agendamento"
           : modalType === ModalType.DELETE
           ? "Excluir agendamento"
-          : ""}
+          : modalType === ModalType.ATENDER
+          ? "Atender paciente"
+          : null}
       </DialogTitle>
       <DialogContent>
         <DialogContentText>
@@ -97,7 +113,9 @@ export default function ModalAgendamentoWithDelete({
             ? "Tem certeza que deseja fazer o pagamento deste agendamento?"
             : modalType === ModalType.DELETE
             ? "Tem certeza que deseja excluir este agendamento?"
-            : ""}
+            : modalType === ModalType.ATENDER
+            ? "Tem certeza que deseja atender o paciente?"
+            : null}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -123,7 +141,9 @@ export default function ModalAgendamentoWithDelete({
             ? "Pagar"
             : modalType === ModalType.DELETE
             ? "Excluir"
-            : ""}
+            : modalType === ModalType.ATENDER
+            ? "Atender"
+            : null}
         </Button>
       </DialogActions>
     </Dialog>
