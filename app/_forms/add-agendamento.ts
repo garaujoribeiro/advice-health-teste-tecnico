@@ -2,10 +2,10 @@ import { z } from "zod";
 import { formErrorMessages } from "../_errors/form-errors";
 
 export const agendamentoFormSchema = z.object({
-  nome: z.string().min(4, {
+  nome_cliente: z.string().min(4, {
     message: formErrorMessages.campoObrigatorio("nome"),
   }),
-  cpf: z
+  cpf_cliente: z
     .string()
     .regex(
       /\d{3}.\d{3}.\d{3}[-]\d{2}/,
@@ -13,33 +13,29 @@ export const agendamentoFormSchema = z.object({
         message: formErrorMessages.cpfInvalido,
       }
     ),
-  telefone: z
+  telefone_cliente: z
     .string()
     .regex(/[(]\d{2}[)][ ]\d{5}[-]\d{4}/, {
       message: formErrorMessages.telefoneInvalido,
     }),
-  cep: z.optional(z.string().regex(/^(?:\d{5}-?\d{3}|)$/, {
+  cep_cliente: z.optional(z.string().regex(/^(?:\d{5}-?\d{3}|)$/, {
     message: formErrorMessages.cepInvalido,
   })),
-  logradouro: z.optional(z.string()),
-  bairro: z.optional(z.string()),
-  complemento: z.optional(z.string()),
-  numero: z.optional(z.string()),
-  cidade: z.optional(z.string()),
-  uf: z.optional(z.string()),
+  endereco_cliente: z.optional(z.string()),
+  bairro_cliente: z.optional(z.string()),
+  complemento_cliente: z.optional(z.string()),
+  numero_cliente: z.optional(z.string()),
 });
 
 export type AgendamentoFormSchema = z.infer<typeof agendamentoFormSchema>;
 
 export const agendamentoFormDefaultValues: AgendamentoFormSchema = {
-  cpf: "",
-  telefone: "",
-  cep: "",
-  nome: "",
-  cidade: "",
-  uf: "",
-  logradouro: "",
-  bairro: "",
-  complemento: "",
-  numero: ""
+  cpf_cliente: "",
+  telefone_cliente: "",
+  cep_cliente: "",
+  nome_cliente: "",
+  endereco_cliente: "",
+  bairro_cliente: "",
+  complemento_cliente: "",
+  numero_cliente: ""
 };

@@ -77,6 +77,9 @@ export default function AgendamentoTable({
         headerName: "Horário",
         width: 100,
         renderCell({ value }) {
+          if(!value){
+            return "";
+          }
           return dayjs(value as string).format("HH:mm");
         },
       },

@@ -7,6 +7,7 @@ import {
   Button,
   Checkbox,
   Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
   InputLabel,
@@ -25,12 +26,12 @@ export default function FiltroConsultaModal({
 }: FiltroConsultaModalProps) {
   const [open, setOpen] = useState(false);
 
+  const { dispatch, medico_id, atendimento, data_inicio, data_fim, pagamento } =
+    useContext(FiltroContext);
+
   const handleClose = useCallback(() => {
     setOpen(false);
   }, []);
-
-  const { dispatch, medico_id, atendimento, data_inicio, pagamento } =
-    useContext(FiltroContext);
 
   return (
     <>
@@ -43,20 +44,26 @@ export default function FiltroConsultaModal({
         <span>Filtros avançados</span>
       </Button>
 
-      <Dialog fullWidth maxWidth="lg" open={open} onClose={handleClose}>
+      <Dialog
+        PaperProps={{
+          sx: {
+            padding: 2,
+          },
+        }}
+        fullWidth
+        maxWidth="lg"
+        open={open}
+        onClose={handleClose}
+      >
         <DialogTitle>Filtrar listagem</DialogTitle>
-        <DialogContent
-          sx={{
-            padding: "24px 32px",
-          }}
-        >
+        <DialogContent>
           <div className="row py-4">
             <div className="col-8">
               <InputLabel>Filtrar por médico</InputLabel>
               <Autocomplete
-              sx={{
-                mt: 3
-              }}
+                sx={{
+                  mt: 3,
+                }}
                 options={medicosFiltered}
                 onChange={(_event, value) => {
                   if (!value) {
@@ -148,9 +155,13 @@ export default function FiltroConsultaModal({
 
             <div className="col-12 gap-2 d-flex align-items-center mt-4">
               <div className="col-5">
-                <InputLabel>Filtrar por data inicial</InputLabel>
                 <DatePicker
-                  onAccept={(date) => {
+                  reduceAnimations
+                  maxDate={
+                    dayjs(data_fim).isValid() ? dayjs(data_fim) : dayjs()
+                  }
+                  value={dayjs(data_inicio)}
+                  onChange={(date) => {
                     dispatch({
                       type: "filtrar",
                       payload: {
@@ -168,9 +179,10 @@ export default function FiltroConsultaModal({
               </div>
 
               <div className="col-5">
-                <InputLabel>Filtrar por data final</InputLabel>
                 <DatePicker
-                  onAccept={(date) => {
+                  reduceAnimations
+                  value={dayjs(data_fim)}
+                  onChange={(date) => {
                     dispatch({
                       type: "filtrar",
                       payload: {
@@ -185,7 +197,9 @@ export default function FiltroConsultaModal({
                   }}
                   label="Data fim"
                   className="ms-2"
-                  minDate={dayjs(data_inicio) ?? dayjs()}
+                  minDate={
+                    dayjs(data_inicio).isValid() ? dayjs(data_inicio) : dayjs()
+                  }
                 />
               </div>
             </div>
@@ -195,6 +209,10 @@ export default function FiltroConsultaModal({
             <div className="col-2"></div>
           </div>
         </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleClose}>Fechar</Button>
+        </DialogActions>
       </Dialog>
     </>
   );

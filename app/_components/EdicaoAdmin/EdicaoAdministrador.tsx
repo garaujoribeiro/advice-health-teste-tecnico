@@ -63,20 +63,20 @@ export default function EdicaoAdmin({ id, open, onClose }: EdicaoAdminProps) {
 
   const { setValue, watch, reset } = form;
 
-  const queryCep = useDebounce(async (cep: string) => {
-    if (cep.length < 9) return;
+  const queryCep = useDebounce(async (cep_cliente: string) => {
+    if (cep_cliente.length < 9) return;
     try {
       const {
-        data: { bairro, complemento, logradouro },
+        data: { bairro_cliente, complemento_cliente, endereco_cliente },
       } = await api.get<{
-        bairro: string;
+        bairro_cliente: string;
         uf: string;
-        complemento: string;
-        logradouro: string;
-      }>(`https://viacep.com.br/ws/${cep}/json/`);
-      setValue("bairro", bairro);
-      setValue("logradouro", logradouro);
-      setValue("complemento", complemento);
+        complemento_cliente: string;
+        endereco_cliente: string;
+      }>(`https://viacep.com.br/ws/${cep_cliente}/json/`);
+      setValue("bairro_cliente", bairro_cliente);
+      setValue("endereco_cliente", endereco_cliente);
+      setValue("complemento_cliente", complemento_cliente);
     } catch (err) {
       console.log(err);
     }
@@ -84,14 +84,14 @@ export default function EdicaoAdmin({ id, open, onClose }: EdicaoAdminProps) {
 
   useEffect(() => {
     if (!agendamento) return;
-    setValue("nome", agendamento.nome_cliente);
-    setValue("cpf", agendamento.cpf_cliente);
-    setValue("telefone", agendamento.telefone_cliente);
-    setValue("cep", agendamento.cep_cliente);
-    setValue("logradouro", agendamento.endereco_cliente);
-    setValue("numero", agendamento.numero_cliente);
-    setValue("complemento", agendamento.complemento_cliente);
-    setValue("bairro", agendamento.bairro_cliente);
+    setValue("nome_cliente", agendamento.nome_cliente);
+    setValue("cpf_cliente", agendamento.cpf_cliente);
+    setValue("telefone_cliente", agendamento.telefone_cliente);
+    setValue("cep_cliente", agendamento.cep_cliente);
+    setValue("endereco_cliente", agendamento.endereco_cliente);
+    setValue("numero_cliente", agendamento.numero_cliente);
+    setValue("complemento_cliente", agendamento.complemento_cliente);
+    setValue("bairro_cliente", agendamento.bairro_cliente);
     setValue("pago", agendamento?.pago ?? 0);
     setValue("atendido", agendamento?.atendido ?? 0);
     setValue("medico_id", agendamento.medico_id);
@@ -126,15 +126,17 @@ export default function EdicaoAdmin({ id, open, onClose }: EdicaoAdminProps) {
         },
         onSubmit: form.handleSubmit((data) => {
           putAgendamentoMutation.mutate({
-            ...data,
-            nome_cliente: data.nome,
-            telefone_cliente: data.telefone,
-            cpf_cliente: data.cpf,
-            cep_cliente: data.cep,
-            endereco_cliente: data.logradouro,
-            numero_cliente: data.numero,
-            complemento_cliente: data.complemento,
-            bairro_cliente: data.bairro,
+            ...agendamento,
+            nome_cliente: data.nome_cliente,
+            telefone_cliente: data.telefone_cliente,
+            cpf_cliente: data.cpf_cliente,
+            cep_cliente: data.cep_cliente,
+            endereco_cliente: data.endereco_cliente,
+            numero_cliente: data.numero_cliente,
+            complemento_cliente: data.complemento_cliente,
+            bairro_cliente: data.bairro_cliente,
+            pago: data.pago,
+            atendido: data.atendido,
           });
         }),
       }}
@@ -197,12 +199,12 @@ export default function EdicaoAdmin({ id, open, onClose }: EdicaoAdminProps) {
           </div>
           <div className="col-6 flex-grow-1">
             <FormControl fullWidth>
-              <FormLabel htmlFor="nome">Nome*</FormLabel>
+              <FormLabel htmlFor="nome_cliente">Nome*</FormLabel>
               <TextField
                 placeholder="Nome do paciente"
-                {...form.register("nome")}
-                error={!!form.formState.errors.nome}
-                helperText={form.formState.errors.nome?.message}
+                {...form.register("nome_cliente")}
+                error={!!form.formState.errors.nome_cliente}
+                helperText={form.formState.errors.nome_cliente?.message}
               />
             </FormControl>
           </div>
@@ -212,9 +214,9 @@ export default function EdicaoAdmin({ id, open, onClose }: EdicaoAdminProps) {
               <FormLabel htmlFor="CPF">CPF*</FormLabel>
               <TextField
                 placeholder="CPF do paciente"
-                {...form.register("cpf", {
+                {...form.register("cpf_cliente", {
                   onChange: (e) => {
-                    setValue("cpf", cpfMask(e.target.value));
+                    setValue("cpf_cliente", cpfMask(e.target.value));
                   },
                 })}
                 slotProps={{
@@ -222,8 +224,8 @@ export default function EdicaoAdmin({ id, open, onClose }: EdicaoAdminProps) {
                     maxLength: 14,
                   },
                 }}
-                error={!!form.formState.errors.cpf}
-                helperText={form.formState.errors.cpf?.message}
+                error={!!form.formState.errors.cpf_cliente}
+                helperText={form.formState.errors.cpf_cliente?.message}
               />
             </FormControl>
           </div>
@@ -232,12 +234,12 @@ export default function EdicaoAdmin({ id, open, onClose }: EdicaoAdminProps) {
         <div className="row w-100 mt-2">
           <div className="col-6 flex-grow-1">
             <FormControl fullWidth>
-              <FormLabel htmlFor="telefone">Telefone*</FormLabel>
+              <FormLabel htmlFor="telefone_cliente">Telefone*</FormLabel>
               <TextField
                 placeholder="Telefone"
-                {...form.register("telefone", {
+                {...form.register("telefone_cliente", {
                   onChange: (e) => {
-                    setValue("telefone", phoneMask(e.target.value));
+                    setValue("telefone_cliente", phoneMask(e.target.value));
                   },
                 })}
                 slotProps={{
@@ -245,21 +247,21 @@ export default function EdicaoAdmin({ id, open, onClose }: EdicaoAdminProps) {
                     maxLength: 15,
                   },
                 }}
-                error={!!form.formState.errors.telefone}
-                helperText={form.formState.errors.telefone?.message}
+                error={!!form.formState.errors.telefone_cliente}
+                helperText={form.formState.errors.telefone_cliente?.message}
               />
             </FormControl>
           </div>
 
           <div className="col-6">
             <FormControl fullWidth>
-              <FormLabel htmlFor="cep">Cep</FormLabel>
+              <FormLabel htmlFor="cep_cliente">Cep</FormLabel>
               <TextField
                 placeholder="Cep"
-                {...form.register("cep", {
+                {...form.register("cep_cliente", {
                   onChange: (e) => {
                     const { value } = e.target;
-                    setValue("cep", cepMask(value));
+                    setValue("cep_cliente", cepMask(value));
                     queryCep(value.replaceAll(".", ""));
                   },
                 })}
@@ -268,8 +270,8 @@ export default function EdicaoAdmin({ id, open, onClose }: EdicaoAdminProps) {
                     maxLength: 9,
                   },
                 }}
-                error={!!form.formState.errors.cep}
-                helperText={form.formState.errors.cep?.message}
+                error={!!form.formState.errors.cep_cliente}
+                helperText={form.formState.errors.cep_cliente?.message}
               />
             </FormControl>
           </div>
@@ -278,18 +280,18 @@ export default function EdicaoAdmin({ id, open, onClose }: EdicaoAdminProps) {
         <div className="row w-100 mt-2">
           <div className="col-6 flex-grow-1">
             <FormControl fullWidth>
-              <FormLabel htmlFor="logradouro">Endereço</FormLabel>
+              <FormLabel htmlFor="endereco_cliente">Endereço</FormLabel>
               <TextField
                 placeholder="Endereço"
-                {...form.register("logradouro")}
+                {...form.register("endereco_cliente")}
               />
             </FormControl>
           </div>
 
           <div className="col-6">
             <FormControl fullWidth>
-              <FormLabel htmlFor="numero">Numero</FormLabel>
-              <TextField placeholder="Numero" {...form.register("numero")} />
+              <FormLabel htmlFor="numero_cliente">Numero</FormLabel>
+              <TextField placeholder="Numero" {...form.register("numero_cliente")} />
             </FormControl>
           </div>
         </div>
@@ -297,17 +299,17 @@ export default function EdicaoAdmin({ id, open, onClose }: EdicaoAdminProps) {
         <div className="row w-100 mt-2">
           <div className="col-6 flex-grow-1">
             <FormControl fullWidth>
-              <FormLabel htmlFor="bairro">Bairro</FormLabel>
-              <TextField placeholder="Bairro" {...form.register("bairro")} />
+              <FormLabel htmlFor="bairro_cliente">Bairro</FormLabel>
+              <TextField placeholder="Bairro" {...form.register("bairro_cliente")} />
             </FormControl>
           </div>
 
           <div className="col-6">
             <FormControl fullWidth>
-              <FormLabel htmlFor="complemento">Complemento</FormLabel>
+              <FormLabel htmlFor="complemento_cliente">Complemento</FormLabel>
               <TextField
                 placeholder="Complemento do endereço"
-                {...form.register("complemento")}
+                {...form.register("complemento_cliente")}
               />
             </FormControl>
           </div>

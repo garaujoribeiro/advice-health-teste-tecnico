@@ -24,7 +24,7 @@ import {
   useAgendamentos,
   useAgendamentosMutations,
 } from "@/app/_hooks/useAgendamentos";
-import { Agendamento, AgendamentoDTO } from "@/api/types";
+import { Agendamento } from "@/api/types";
 import { useSearchParams } from "next/navigation";
 import { ModalType } from "../BoxAgendamento/BoxAgendamento";
 import { useEffect } from "react";
@@ -57,8 +57,8 @@ export default function ModalAgendamento({
 
   const { showSnackbar } = useSnackbar();
 
-  const queryCep = useDebounce(async (cep: string) => {
-    if (cep.length < 9) return;
+  const queryCep = useDebounce(async (cep_cliente: string) => {
+    if (cep_cliente.length < 9) return;
     try {
       const {
         data: { bairro, complemento, logradouro },
@@ -67,10 +67,10 @@ export default function ModalAgendamento({
         uf: string;
         complemento: string;
         logradouro: string;
-      }>(`https://viacep.com.br/ws/${cep}/json/`);
-      form.setValue("bairro", bairro);
-      form.setValue("logradouro", logradouro);
-      form.setValue("complemento", complemento);
+      }>(`https://viacep.com.br/ws/${cep_cliente}/json/`);
+      form.setValue("bairro_cliente", bairro);
+      form.setValue("endereco_cliente", logradouro);
+      form.setValue("complemento_cliente", complemento);
     } catch (err) {
       console.log(err);
     }
@@ -94,7 +94,7 @@ export default function ModalAgendamento({
   const medicoId = useSearchParams().get("med");
 
   const {
-    getAgendamentoQuery: { data },
+    getAgendamentoQuery: { data, refetch: refetchAgendamento },
   } = useAgendamentos({
     agendamentoId,
     config: { enabled: !!agendamentoId, refetchOnMount: true },
@@ -116,18 +116,25 @@ export default function ModalAgendamento({
       telefone_cliente,
     } = agendamento;
     if (modalType === ModalType.EDIT && agendamentoId && open) {
-      setValue("nome", nome_cliente);
-      setValue("telefone", telefone_cliente);
-      setValue("cpf", cpf_cliente);
-      setValue("cep", cep_cliente);
-      setValue("logradouro", endereco_cliente);
-      setValue("numero", numero_cliente);
-      setValue("complemento", complemento_cliente);
-      setValue("bairro", bairro_cliente);
+      setValue("nome_cliente", nome_cliente);
+      setValue("telefone_cliente", telefone_cliente);
+      setValue("cpf_cliente", cpf_cliente);
+      setValue("cep_cliente", cep_cliente);
+      setValue("endereco_cliente", endereco_cliente);
+      setValue("numero_cliente", numero_cliente);
+      setValue("complemento_cliente", complemento_cliente);
+      setValue("bairro_cliente", bairro_cliente);
     }
 
     return () => reset();
   }, [agendamento, agendamentoId, modalType, setValue, reset, open]);
+
+  useEffect(() => {
+    if (open && modalType === ModalType.EDIT && agendamentoId) {
+      // fazer um refetch sempre que o modal abrir para garantir que os dados estão atualizados
+      refetchAgendamento();
+    }
+  }, [agendamentoId, modalType, open, refetchAgendamento]);
 
   return (
     <Dialog
@@ -140,31 +147,50 @@ export default function ModalAgendamento({
         sx: {
           padding: 2,
         },
-        onSubmit: form.handleSubmit((data) => {
-          if (!medicoId) return;
-          const agendamento: AgendamentoDTO = {
-            hora,
-            medico_id: medicoId,
-            pago: 0,
-            id: medicoId + "-" + hora.toISOString() + "-" + data.cpf,
-            nome_cliente: data.nome,
-            telefone_cliente: data.telefone,
-            cpf_cliente: data.cpf,
-            cep_cliente: data.cep,
-            endereco_cliente: data.logradouro,
-            numero_cliente: data.numero,
-            complemento_cliente: data.complemento,
-            bairro_cliente: data.bairro,
-          };
-          if (modalType === ModalType.EDIT && agendamentoId) {
-            putAgendamentoMutation.mutate({
-              ...agendamento,
-              id: agendamentoId,
+        onSubmit: form.handleSubmit(
+          ({
+            cpf_cliente,
+            nome_cliente,
+            telefone_cliente,
+            bairro_cliente,
+            cep_cliente,
+            complemento_cliente,
+            endereco_cliente,
+            numero_cliente,
+          }) => {
+            console.log(data);
+            if (!medicoId) return;
+            if (modalType === ModalType.EDIT && agendamentoId) {
+              putAgendamentoMutation.mutate({
+                ...agendamento,
+                cpf_cliente,
+                nome_cliente,
+                telefone_cliente,
+                bairro_cliente,
+                cep_cliente,
+                complemento_cliente,
+                endereco_cliente,
+                numero_cliente,
+              });
+              return;
+            }
+            postAgendamentoMutation.mutate({
+              hora,
+              medico_id: medicoId,
+              pago: 0,
+              atendido: 0,
+              id: medicoId + "-" + hora.toISOString() + "-" + cpf_cliente,
+              nome_cliente,
+              telefone_cliente,
+              cpf_cliente,
+              cep_cliente,
+              endereco_cliente,
+              numero_cliente,
+              complemento_cliente,
+              bairro_cliente,
             });
-            return;
           }
-          postAgendamentoMutation.mutate(agendamento);
-        }),
+        ),
       }}
     >
       <DialogTitle>Agendar Consulta</DialogTitle>
@@ -172,12 +198,12 @@ export default function ModalAgendamento({
         <div className="row w-100">
           <div className="col-6 flex-grow-1">
             <FormControl fullWidth>
-              <FormLabel htmlFor="nome">Nome*</FormLabel>
+              <FormLabel htmlFor="nome_cliente">Nome*</FormLabel>
               <TextField
                 placeholder="Nome do paciente"
-                {...form.register("nome")}
-                error={!!form.formState.errors.nome}
-                helperText={form.formState.errors.nome?.message}
+                {...form.register("nome_cliente")}
+                error={!!form.formState.errors.nome_cliente}
+                helperText={form.formState.errors.nome_cliente?.message}
               />
             </FormControl>
           </div>
@@ -188,9 +214,9 @@ export default function ModalAgendamento({
               <TextField
                 placeholder="CPF do paciente"
                 fullWidth
-                {...form.register("cpf", {
+                {...form.register("cpf_cliente", {
                   onChange: (e) => {
-                    form.setValue("cpf", cpfMask(e.target.value));
+                    form.setValue("cpf_cliente", cpfMask(e.target.value));
                   },
                 })}
                 slotProps={{
@@ -198,8 +224,8 @@ export default function ModalAgendamento({
                     maxLength: 14,
                   },
                 }}
-                error={!!form.formState.errors.cpf}
-                helperText={form.formState.errors.cpf?.message}
+                error={!!form.formState.errors.cpf_cliente}
+                helperText={form.formState.errors.cpf_cliente?.message}
               />
             </FormControl>
           </div>
@@ -208,12 +234,15 @@ export default function ModalAgendamento({
         <div className="row w-100 mt-2">
           <div className="col-6 flex-grow-1">
             <FormControl fullWidth>
-              <FormLabel htmlFor="telefone">Telefone*</FormLabel>
+              <FormLabel htmlFor="telefone_cliente">Telefone*</FormLabel>
               <TextField
                 placeholder="Telefone"
-                {...form.register("telefone", {
+                {...form.register("telefone_cliente", {
                   onChange: (e) => {
-                    form.setValue("telefone", phoneMask(e.target.value));
+                    form.setValue(
+                      "telefone_cliente",
+                      phoneMask(e.target.value)
+                    );
                   },
                 })}
                 slotProps={{
@@ -221,22 +250,22 @@ export default function ModalAgendamento({
                     maxLength: 15,
                   },
                 }}
-                error={!!form.formState.errors.telefone}
-                helperText={form.formState.errors.telefone?.message}
+                error={!!form.formState.errors.telefone_cliente}
+                helperText={form.formState.errors.telefone_cliente?.message}
               />
             </FormControl>
           </div>
 
           <div className="col-6">
             <FormControl fullWidth>
-              <FormLabel htmlFor="cep">Cep</FormLabel>
+              <FormLabel htmlFor="cep_cliente">Cep</FormLabel>
               <TextField
                 placeholder="Cep"
                 fullWidth
-                {...form.register("cep", {
+                {...form.register("cep_cliente", {
                   onChange: (e) => {
                     const { value } = e.target;
-                    form.setValue("cep", cepMask(value));
+                    form.setValue("cep_cliente", cepMask(value));
                     queryCep(value.replaceAll(".", ""));
                   },
                 })}
@@ -245,8 +274,8 @@ export default function ModalAgendamento({
                     maxLength: 9,
                   },
                 }}
-                error={!!form.formState.errors.cep}
-                helperText={form.formState.errors.cep?.message}
+                error={!!form.formState.errors.cep_cliente}
+                helperText={form.formState.errors.cep_cliente?.message}
               />
             </FormControl>
           </div>
@@ -255,21 +284,21 @@ export default function ModalAgendamento({
         <div className="row w-100 mt-2">
           <div className="col-6 flex-grow-1">
             <FormControl fullWidth>
-              <FormLabel htmlFor="logradouro">Endereço</FormLabel>
+              <FormLabel htmlFor="endereco_cliente">Endereço</FormLabel>
               <TextField
                 placeholder="Endereço"
-                {...form.register("logradouro")}
+                {...form.register("endereco_cliente")}
               />
             </FormControl>
           </div>
 
           <div className="col-6">
             <FormControl fullWidth>
-              <FormLabel htmlFor="numero">Numero</FormLabel>
+              <FormLabel htmlFor="numero_cliente">Numero</FormLabel>
               <TextField
                 placeholder="Numero"
                 fullWidth
-                {...form.register("numero")}
+                {...form.register("numero_cliente")}
               />
             </FormControl>
           </div>
@@ -278,18 +307,21 @@ export default function ModalAgendamento({
         <div className="row w-100 mt-2">
           <div className="col-6 flex-grow-1">
             <FormControl fullWidth>
-              <FormLabel htmlFor="bairro">Bairro</FormLabel>
-              <TextField placeholder="Bairro" {...form.register("bairro")} />
+              <FormLabel htmlFor="bairro_cliente">Bairro</FormLabel>
+              <TextField
+                placeholder="Bairro"
+                {...form.register("bairro_cliente")}
+              />
             </FormControl>
           </div>
 
           <div className="col-6">
             <FormControl fullWidth>
-              <FormLabel htmlFor="complemento">Complemento</FormLabel>
+              <FormLabel htmlFor="complemento_cliente">Complemento</FormLabel>
               <TextField
                 placeholder="Complemento do endereço"
                 fullWidth
-                {...form.register("complemento")}
+                {...form.register("complemento_cliente")}
               />
             </FormControl>
           </div>

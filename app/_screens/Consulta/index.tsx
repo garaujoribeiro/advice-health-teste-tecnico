@@ -132,11 +132,12 @@ export default function ConsultaIndexPage() {
       if (medico_id && row.medico_id !== medico_id) return false;
 
       // filtro por data inicio
-      if (data_inicio && dayjs(row.hora).isBefore(dayjs(data_inicio)))
+      console.log(dayjs(data_inicio).isValid());
+      if (dayjs(data_inicio).isValid() && dayjs(row.hora).isBefore(dayjs(data_inicio)))
         return false;
 
       // filtro por data fim
-      if (data_fim && dayjs(row.hora).isAfter(dayjs(data_fim))) return false;
+      if (dayjs(data_fim).isValid() && dayjs(row.hora).isAfter(dayjs(data_fim))) return false;
 
       // filtro por busca
       if (

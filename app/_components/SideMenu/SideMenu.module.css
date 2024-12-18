@@ -25,6 +25,9 @@
   &:hover {
     background-color: var(--bs-gray-300);
   }
+  &[data-active="true"] {
+    background-color: var(--bs-gray-300);
+  }
 }
 
 .sideMenuItemText {

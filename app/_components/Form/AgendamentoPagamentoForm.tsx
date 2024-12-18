@@ -17,6 +17,7 @@ import { Agendamento } from "@/api/types";
 import { useSearchParams } from "next/navigation";
 import { ModalType } from "../BoxAgendamento/BoxAgendamento";
 import useSnackbar from "@/app/_hooks/useSnackbar";
+import { useEffect } from "react";
 
 interface ModalAgendamentoWithDeleteProps {
   open: boolean;
@@ -55,17 +56,27 @@ export default function ModalAgendamentoWithDelete({
   const medicoId = useSearchParams().get("med");
 
   const {
-    getAgendamentoQuery: { data },
+    getAgendamentoQuery: { data, refetch: refetchAgendamento },
   } = useAgendamentos({
     agendamentoId,
-    config: { enabled: !!agendamentoId, refetchOnMount: true },
+    config: {
+      enabled: !!agendamentoId,
+    },
   });
+
+  useEffect(() => {
+    if (open) {
+      // fazer um refetch sempre que o modal abrir para garantir que os dados estão atualizados
+      refetchAgendamento();
+    }
+  }, [open, refetchAgendamento]);
 
   const agendamento = data as Agendamento;
 
   return (
     <Dialog
       open={open}
+      keepMounted={false}
       onClose={() => dispatch({ type: "close" })}
       maxWidth="md"
       fullWidth
@@ -82,12 +93,13 @@ export default function ModalAgendamentoWithDelete({
             putAgendamentoMutation.mutate({
               ...agendamento,
               id: agendamentoId,
-              pago: 1,
+              pago: 1
             });
             return;
           }
 
           if (modalType === ModalType.ATENDER && agendamentoId) {
+            refetchAgendamento();
             putAgendamentoMutation.mutate(
               {
                 ...agendamento,

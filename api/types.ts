@@ -26,6 +26,7 @@ export type Agendamento = {
 
 export type AgendamentoDTO = {
   id: string,
+  atendido: 0 | 1,
   medico_id: string,
   hora: Date;
   nome_cliente: string;

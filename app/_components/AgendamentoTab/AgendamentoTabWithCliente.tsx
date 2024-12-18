@@ -76,9 +76,11 @@ export default function AgendamentoTabWithCliente({
               overflow: "hidden",
               textOverflow: "ellipsis",
               maxWidth: "300px",
+              margin: 0,
+              height: "100%",
             }}
             title={cliente}
-            className="h5 ms-3"
+            className="h4 ms-3"
           >
             {cliente}
           </h4>
